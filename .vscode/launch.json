@@ -1,0 +1,49 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "D2MOO: Attach to Game.exe (manual)",
+            "type": "cppvsdbg",
+            "request": "attach",
+            "processId": "${command:pickProcess}",
+            "symbolSearchPath": "${workspaceFolder}/out/build/VS2022/runtime/Debug;${workspaceFolder}/out/build/VS2022/source",
+            "sourceFileMap": {
+                "${workspaceFolder}": "${workspaceFolder}"
+            }
+        },
+        {
+            "name": "D2MOO: Launch DetoursLauncher (non-admin)",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/out/build/VS2022/runtime/Debug/D2.DetoursLauncher.exe",
+            "args": [
+                "--",
+                "-w",
+                "-debug"
+            ],
+            "cwd": "${workspaceFolder}/out/build/VS2022/runtime/Debug",
+            "autoAttachChildProcess": true,
+            "environment": [
+                {
+                    "name": "DIABLO2_PATCH",
+                    "value": "${workspaceFolder}/out/build/VS2022/runtime/Debug"
+                }
+            ],
+            "symbolSearchPath": "${workspaceFolder}/out/build/VS2022/runtime/Debug;${workspaceFolder}/out/build/VS2022/source",
+            "sourceFileMap": {
+                "${workspaceFolder}": "${workspaceFolder}"
+            }
+        },
+        {
+            "name": "D2MOO: Launch (non-admin) then Attach (legacy)",
+            "type": "cppvsdbg",
+            "request": "attach",
+            "preLaunchTask": "Launch Game via D2.DetoursLauncher (non-admin, wait for process)",
+            "processId": "${command:pickProcess}",
+            "symbolSearchPath": "${workspaceFolder}/out/build/VS2022/runtime/Debug;${workspaceFolder}/out/build/VS2022/source",
+            "sourceFileMap": {
+                "${workspaceFolder}": "${workspaceFolder}"
+            }
+        }
+    ]
+}

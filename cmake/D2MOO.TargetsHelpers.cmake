@@ -57,6 +57,14 @@ endfunction()
 function(D2MOO_prepare_targets LibraryName)
   # The real target you should be linking/installing
   add_library(${LibraryName})
+
+  if(MSVC)
+    # Ensure PDBs are generated for attach debugging in VS Code.
+    target_link_options(${LibraryName} PRIVATE
+      $<$<CONFIG:Debug>:/DEBUG:FULL>
+      $<$<CONFIG:RelWithDebInfo>:/DEBUG:FULL>
+    )
+  endif()
   
   if(BUILD_SHARED_LIBS)
     set(${LibraryName}ImplName ${LibraryName}Objects)

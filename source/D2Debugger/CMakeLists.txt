@@ -1,5 +1,5 @@
-
-add_library(D2Debugger SHARED 
+﻿
+add_library(D2Debugger SHARED
   src/D2Debugger.cpp
   src/D2Debugger.Game.cpp
   src/D2Debugger.imgui.d3d9.cpp
@@ -8,15 +8,15 @@ add_library(D2Debugger SHARED
   # Font awesome 6
   #src/fa-solid-900.cpp
   src/IconsFontAwesome6.h
-  
+
   include/D2Debugger.h
   include/D2Debugger.patch.common.h
-)
+ "include/Log.h")
 target_include_directories(D2Debugger PUBLIC include)
-D2MOO_configure_exports(D2Debugger IGNORE_MISSING_DEF)
 
 target_link_libraries(D2Debugger 
   PRIVATE
+    fmt::fmt
     D2Common
     D2Game
     imgui::imgui d3d9
@@ -26,3 +26,13 @@ target_link_libraries(D2Debugger
 if(MSVC)
     target_link_options(D2Debugger PRIVATE "/DELAYLOAD:d3d9.dll" "Delayimp.lib")
 endif()
+
+if(MSVC)
+  target_compile_options(D2.DetoursLauncher PRIVATE $<$<CONFIG:Debug>:/Zi>)
+  target_link_options(D2.DetoursLauncher PRIVATE $<$<CONFIG:Debug>:/DEBUG>)
+endif()
+install(FILES "$<TARGET_PDB_FILE:D2.DetoursLauncher>"
+  DESTINATION ${CMAKE_INSTALL_BINDIR}
+  OPTIONAL
+)
+

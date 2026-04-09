@@ -53,3 +53,4 @@ Testing/
 
 *.aps
 D2.Detours.patches/1.10f/**resource.h
+cmake-build-debug*/

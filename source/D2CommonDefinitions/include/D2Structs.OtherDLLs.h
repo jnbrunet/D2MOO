@@ -36,23 +36,23 @@ struct D2AnvilUIButtonStrc
 
 struct D2AutomapCellStrc
 {
-	uint32_t fSaved;							//0x00
+	D2AutomapCellStrc *pCell;				    //0x00 nœud résultant après AVL_Insert (= nouvelle racine du sous-arbre)
 	uint16_t nCellNo;							//0x04
 	uint16_t xPixel;							//0x06
 	uint16_t yPixel;							//0x08
-	uint16_t wWeight;							//0x0A
-	D2AutomapCellStrc* pPrev;				//0x0C
-	D2AutomapCellStrc* pNext;				//0x10
+	uint16_t wWeight;							//0x0A facteur AVL {-1, 0, +1}
+	D2AutomapCellStrc* pPrev;				//0x0C fils gauche  (= pLessNode)
+	D2AutomapCellStrc* pNext;				//0x10 fils droit   (= pMoreNode)
 };
 
 struct D2AutomapLayerStrc
 {
 	uint32_t nLayerNo;							//0x00
 	uint32_t fSaved;							//0x04
-	D2AutomapCellStrc* pFloors;				//0x08
-	D2AutomapCellStrc* pWalls;				//0x0C
-	D2AutomapCellStrc* pObjects;			//0x10
-	D2AutomapCellStrc* pExtras;				//0x14
+	D2AutomapCellStrc* pFloors;				//0x08 // racine de l'arbre AVL des sols
+	D2AutomapCellStrc* pWalls;				//0x0C // racine de l'arbre AVL des murs
+	D2AutomapCellStrc* pObjects;			//0x10 // racine de l'arbre AVL des objets
+	D2AutomapCellStrc* pExtras;				//0x14 // racine de l'arbre AVL des éléments de décoration (arbres, etc.)
 	D2AutomapLayerStrc* pNext;				//0x18
 };
 

@@ -36,24 +36,24 @@ enum D2C_LaunchType : uint8_t
 struct D2ConfigStrc
 {
 #if D2_VERSION_EXPANSION // Not present in old versions of the game such as 1.00
-	BOOL bIsExpansion;
+	BOOL bIsExpansion; // 0x00
 #endif
-	uint8_t bWindow;
+	uint8_t bWindow; // 0x04
 #if D2_VERSION_MAJOR >= 1 && D2_VERSION_MINOR >= 13
-	uint8_t bNoFixedAspect;
+	uint8_t bNoFixedAspect; // 0x08
 #endif
-	uint8_t b3DFX;
-	uint8_t bOpenGL;
-	uint8_t bRave;
-	uint8_t bD3D;
-	uint8_t bPerspective;
-	uint8_t bQuality;
-	uint32_t dwGamma;
-	uint8_t bVSync;
-	uint32_t dwFramerate;
-	uint32_t dwGameType;
-	uint16_t wJoinID; // Dangerous ! We may be overwriting szGameName since code expects a 32bit value not 16!
-	char szGameName[24];
+	uint8_t b3DFX; // 0x0C
+	uint8_t bOpenGL; // 0x0D
+	uint8_t bRave; // 0x0E
+	uint8_t bD3D; // 0x0F
+	uint8_t bPerspective; // 0x10
+	uint8_t bQuality; // 0x11
+	uint32_t dwGamma; // 0x12
+	uint8_t bVSync; // 0x13
+	uint32_t dwFramerate; // 0x14
+	uint32_t dwGameType; // 0x18
+	uint16_t wJoinID; // Dangerous ! We may be overwriting szGameName since code expects a 32bit value not 16! // 0x1C
+	char szGameName[24]; // 0x1E  0x1B
 	char szServerIP[24];
 	char szBattleNetIP[24];
 	char szMCPIP[24];

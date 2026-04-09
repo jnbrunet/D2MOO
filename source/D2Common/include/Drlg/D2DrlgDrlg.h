@@ -148,6 +148,8 @@ enum D2MapTileFlags
 	MAPTILE_OBJECT_WALL = 0x000800, // wall tile made of crops: barrels / crates / benches / tables (material flag 0x04)
 	MAPTILE_UNK_0x001000 = 0x001000,
 	MAPTILE_LOS = 0x002000,
+	MAPTILE_EXPLORED = 0x20000, // set when the player has been on the tile
+	MAPTILE_PROCESSED = 0x40000, // set when the tile has been added in the automap AVL tree
 	MAPTILE_WALL_LAYER_BIT = 14,
 	MAPTILE_WALL_LAYER_MASK = 0b111 << MAPTILE_WALL_LAYER_BIT, // 0x1C000: 3bits value indicating the wall layer + 1 (0 indicates no wall?)
 };

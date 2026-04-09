@@ -61,8 +61,8 @@ enum D2C_UnitFlags
 	UNITFLAG_ISINIT = 0x01000000,				//set when unit has been initialized
 	UNITFLAG_ISRESURRECT = 0x02000000,			//set for resurrected units and items on floor
 	UNITFLAG_NOXP = 0x04000000,					//no xp gain from killing this unit
-	UNITFLAG_AUTOMAP = 0x10000000,				//automap stuff
-	UNITFLAG_AUTOMAP2 = 0x20000000,				//automap stuff
+	UNITFLAG_AUTOMAP_VISIBLE = 0x10000000,				//automap stuff
+	UNITFLAG_AUTOMAP_REVEALED = 0x20000000,				//automap stuff
 	UNITFLAG_PETIGNORE = 0x40000000,			//ignored by pets
 	UNITFLAG_ISREVIVE = 0x80000000				//is revived monster
 };

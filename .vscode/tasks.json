@@ -1,0 +1,55 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Launch Game via D2.DetoursLauncher (admin)",
+            "type": "shell",
+            "command": "Start-Process powershell.exe -ArgumentList '-NoProfile', '-Command', '$env:DIABLO2_PATCH = ''${workspaceFolder}/out/build/VS2022/runtime/Debug''; & ''${workspaceFolder}/out/build/VS2022/runtime/Debug/D2.DetoursLauncher.exe'' -- -w -debug' -WorkingDirectory '${workspaceFolder}/out/build/VS2022/runtime/Debug' -Verb RunAs",
+            "options": {
+                "shell": {
+                    "executable": "powershell.exe",
+                    "args": ["-NoProfile", "-Command"]
+                }
+            },
+            "isBackground": true,
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Launch Game via D2.DetoursLauncher (non-admin)",
+            "type": "shell",
+            "command": "Start-Process powershell.exe -ArgumentList '-NoProfile', '-Command', '$env:DIABLO2_PATCH = ''${workspaceFolder}/out/build/VS2022/runtime/Debug''; & ''${workspaceFolder}/out/build/VS2022/runtime/Debug/D2.DetoursLauncher.exe'' -- -w -debug' -WorkingDirectory '${workspaceFolder}/out/build/VS2022/runtime/Debug'",
+            "options": {
+                "shell": {
+                    "executable": "powershell.exe",
+                    "args": ["-NoProfile", "-Command"]
+                }
+            },
+            "isBackground": true,
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Launch Game via D2.DetoursLauncher (non-admin, wait for process)",
+            "type": "shell",
+            "command": "$ErrorActionPreference = 'Stop'; $runtimeDir = '${workspaceFolder}/out/build/VS2022/runtime/Debug'; $launcher = Join-Path $runtimeDir 'D2.DetoursLauncher.exe'; $existing = @(Get-Process -Name Game -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Id); $env:DIABLO2_PATCH = $runtimeDir; Start-Process -FilePath $launcher -ArgumentList '-- -w -debug' -WorkingDirectory $runtimeDir | Out-Null; $deadline = (Get-Date).AddSeconds(25); do { Start-Sleep -Milliseconds 250; $newGame = Get-Process -Name Game -ErrorAction SilentlyContinue | Where-Object { $existing -notcontains $_.Id } | Select-Object -First 1; if ($newGame) { Write-Host ('Game.exe detected (PID=' + $newGame.Id + ')'); exit 0 } } while ((Get-Date) -lt $deadline); Write-Error 'New Game.exe was not detected within timeout.'; exit 1",
+            "options": {
+                "shell": {
+                    "executable": "powershell.exe",
+                    "args": ["-NoProfile", "-Command"]
+                }
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            },
+            "problemMatcher": []
+        }
+    ]
+}
