@@ -253,7 +253,7 @@ D2AutomapCellStrc* D2Client_AutomapDataPool_Alloc()
 //   g_pCurrentAutomapLayer — updated to the layer for the player's current level so the
 //   drawing code always targets the right AVL trees.
 //
-int D2Client_AutomapUpdate()
+int D2Client_InitAutomapLayer()
 {
     if (g_nAutomapUpdateCounter)
     {
@@ -450,6 +450,110 @@ int __fastcall D2Client_AutomapAddObjectCell(D2UnitStrc* pUnit, int nAutomapCell
     return D2Client_AutomapAVL_Insert(pNewCell, ppCellTree);
 }
 
+// D2Client.0x6FACD660 (RVA: 0x2D660)
+void __stdcall D2Client_AutomapRevealRoom(D2ActiveRoomStrc* pRoom)
+{
+    if (!pRoom)
+    {
+        return;
+    }
+
+    const uint32_t nPreviousLayerNo = g_pCurrentAutomapLayer ? g_pCurrentAutomapLayer->nLayerNo : static_cast<uint32_t>(-1);
+
+    const int nLevelId = DUNGEON_GetLevelIdFromRoom(pRoom);
+    D2LevelDefBin* pLevelDef = DATATBLS_GetLevelDefRecord(nLevelId);
+    if (!pLevelDef)
+    {
+        return;
+    }
+
+    const uint32_t dwLayer = pLevelDef->dwLayer;
+    D2AutomapLayerStrc* pLayer = g_pAutomapLayers;
+    while (pLayer && pLayer->nLayerNo != dwLayer)
+    {
+        pLayer = pLayer->pNext;
+    }
+
+    if (!pLayer)
+    {
+        pLayer = static_cast<D2AutomapLayerStrc*>(D2_CALLOC(sizeof(D2AutomapLayerStrc)));
+        pLayer->nLayerNo = dwLayer;
+        pLayer->pNext = g_pAutomapLayers;
+        g_pAutomapLayers = pLayer;
+    }
+
+    if (pLayer != g_pCurrentAutomapLayer)
+    {
+        D2Client_AutomapLayer_Save();
+
+        if (g_pCurrentAutomapLayer)
+        {
+            AutomapDataBlock* pBlock = g_pAutomapDataPool;
+            while (pBlock)
+            {
+                AutomapDataBlock* pNext = pBlock->pNextBlock;
+                D2_FREE(pBlock);
+                pBlock = pNext;
+            }
+
+            g_pAutomapDataPool = nullptr;
+            g_nAutomapDataCount = 0;
+            g_pCurrentAutomapLayer->pFloors = nullptr;
+            g_pCurrentAutomapLayer->pWalls = nullptr;
+            g_pCurrentAutomapLayer->pObjects = nullptr;
+            g_pCurrentAutomapLayer->pExtras = nullptr;
+        }
+
+        g_pCurrentAutomapLayer = pLayer;
+        D2Client_AutomapLayer_Load();
+    }
+
+    D2Client_AutomapRevealLayerRoom(pRoom, 1, pLayer);
+
+    if (nPreviousLayerNo != static_cast<uint32_t>(-1))
+    {
+        D2AutomapLayerStrc* pPreviousLayer = g_pAutomapLayers;
+        while (pPreviousLayer && pPreviousLayer->nLayerNo != nPreviousLayerNo)
+        {
+            pPreviousLayer = pPreviousLayer->pNext;
+        }
+
+        if (!pPreviousLayer)
+        {
+            pPreviousLayer = static_cast<D2AutomapLayerStrc*>(D2_CALLOC(sizeof(D2AutomapLayerStrc)));
+            pPreviousLayer->nLayerNo = nPreviousLayerNo;
+            pPreviousLayer->pNext = g_pAutomapLayers;
+            g_pAutomapLayers = pPreviousLayer;
+        }
+
+        if (pPreviousLayer != g_pCurrentAutomapLayer)
+        {
+            D2Client_AutomapLayer_Save();
+
+            if (g_pCurrentAutomapLayer)
+            {
+                AutomapDataBlock* pBlock = g_pAutomapDataPool;
+                while (pBlock)
+                {
+                    AutomapDataBlock* pNext = pBlock->pNextBlock;
+                    D2_FREE(pBlock);
+                    pBlock = pNext;
+                }
+
+                g_pAutomapDataPool = nullptr;
+                g_nAutomapDataCount = 0;
+                g_pCurrentAutomapLayer->pFloors = nullptr;
+                g_pCurrentAutomapLayer->pWalls = nullptr;
+                g_pCurrentAutomapLayer->pObjects = nullptr;
+                g_pCurrentAutomapLayer->pExtras = nullptr;
+            }
+
+            g_pCurrentAutomapLayer = pPreviousLayer;
+            D2Client_AutomapLayer_Load();
+        }
+    }
+}
+
 // D2Client.0x6FACD180 (RVA: 0x2D180)
 void __fastcall D2Client_AutomapRevealLayerRoom(D2ActiveRoomStrc* pRoom, int bClipFlag, D2AutomapLayerStrc* pLayer)
 {
@@ -505,14 +609,14 @@ void __fastcall D2Client_AutomapRevealLayerRoom(D2ActiveRoomStrc* pRoom, int bCl
 
 // D2Client.0x6FACC610 (RVA: 0x2C610)
 // Loads previously saved automap cell data for a layer from the .d2s save game.
-// Called in D2Client_AutomapUpdate right after the layer is found/created.
+// Called in D2Client_InitAutomapLayer right after the layer is found/created.
 void D2Client_AutomapLayer_Load()
 {
 }
 
 // D2Client.0x6FACBCD0 (RVA: 0x2BCD0)
 // Persists a layer's cell data back to the .d2s save game.
-// Called in D2Client_AutomapUpdate after all rooms for this tick have been revealed.
+// Called in D2Client_InitAutomapLayer after all rooms for this tick have been revealed.
 void D2Client_AutomapLayer_Save()
 {
 }

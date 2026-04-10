@@ -69,6 +69,8 @@ int __fastcall D2Client_AutomapAddTileCell(D2DrlgTileDataStrc* pTileData, D2Drlg
 int __fastcall D2Client_AutomapAddObjectCell(D2UnitStrc* pUnit, int nAutomapCellNumber, D2AutomapCellStrc** ppCellTree);
 // D2Client.0x6FACD180 (RVA: 0x2D180)
 void __fastcall D2Client_AutomapRevealLayerRoom(D2ActiveRoomStrc* pRoom, int bClipFlag, D2AutomapLayerStrc* pLayer);
+// D2Client.0x6FACD660 (RVA: 0x2D660)
+void __stdcall D2Client_AutomapRevealRoom(D2ActiveRoomStrc* pRoom);
 void __fastcall D2Client_AutomapDrawDiamond(int nX, int nY, uint8_t nColor);
 // D2Client.0x6FACC610 (RVA: 0x2C610)
 void D2Client_AutomapLayer_Load();

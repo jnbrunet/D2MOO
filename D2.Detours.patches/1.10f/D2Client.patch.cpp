@@ -1,5 +1,8 @@
 #include <DetoursPatch.h>
 
+#include <cwchar>
+
+#include <GAME/SCmd.h>
 #include <UI/automap.h>
 
 // Defined in CUnit.cpp
@@ -7,7 +10,7 @@ extern struct D2UnitStrc* g_pCurrentUnit;
 extern struct D2UnitStrc* D2Client_GetCurrentUnit();
 extern struct D2ActiveRoomStrc* D2Client_GetCurrentUnitRoom();
 // Defined in automap.cpp
-extern int D2Client_AutomapUpdate();
+extern int D2Client_InitAutomapLayer();
 extern void D2Client_AutomapLayer_Load();
 extern void D2Client_AutomapLayer_Save();
 
@@ -49,12 +52,14 @@ static const int D2ClientImageBase = 0x6FAA0000;
 
 static ExtraPatchAction extraPatchActions[] = {
 #ifdef D2_VERSION_110F
+    { 0x6FAB50B0 - D2ClientImageBase, &D2Client_ParseGamePacket, PatchAction::FunctionReplaceOriginalByPatch },
     { 0x6FACBA40 - D2ClientImageBase, &D2Client_AutomapDataPool_Alloc, PatchAction::FunctionReplaceOriginalByPatch },
-    { 0x6FACBAF0 - D2ClientImageBase, &D2Client_AutomapUpdate, PatchAction::FunctionReplaceOriginalByPatch },
+    { 0x6FACBAF0 - D2ClientImageBase, &D2Client_InitAutomapLayer, PatchAction::FunctionReplaceOriginalByPatch },
     { 0x6FACCD50 - D2ClientImageBase, &D2Client_AutomapAVL_Insert, PatchAction::FunctionReplaceOriginalByPatch },
     { 0x6FACD180 - D2ClientImageBase, &D2Client_AutomapRevealLayerRoom, PatchAction::FunctionReplaceOriginalByPatch },
     { 0x6FACD3C0 - D2ClientImageBase, &D2Client_AutomapAddTileCell, PatchAction::FunctionReplaceOriginalByPatch },
     { 0x6FACD560 - D2ClientImageBase, &D2Client_AutomapAddObjectCell, PatchAction::FunctionReplaceOriginalByPatch },
+    { 0x6FACD660 - D2ClientImageBase, &D2Client_AutomapRevealRoom, PatchAction::FunctionReplaceOriginalByPatch },
 
     { 0x6FBAF990 - D2ClientImageBase, &g_AutomapCellGroupByNo, PatchAction::PointerReplacePatchByOriginal },
     { 0x6FBB1998 - D2ClientImageBase, &g_pAutomapDataPool, PatchAction::PointerReplacePatchByOriginal },
@@ -96,6 +101,18 @@ PatchInformationFunctions __cdecl GetPatchInformationFunctions(const wchar_t* dl
     return { &GetBaseOrdinal, &GetLastOrdinal, &GetPatchAction, &GetExtraPatchActionsCount, &GetExtraPatchAction };
 }
 
+__declspec(dllexport)
+uint32_t __cdecl DllPreLoadHook(HookContext* ctx, const wchar_t* dllName)
+{
+    if (_wcsicmp(dllName, L"D2Client.dll") == 0)
+    {
+        D2Client_SetOriginalModuleBase(ctx->hOriginalModule);
+        D2Client_LoadOffsets();
+    }
+
+    return 0;
+}
+
 }
 
 #include <type_traits>
@@ -108,3 +125,4 @@ static_assert(std::is_same<decltype(GetExtraPatchActionsCount)*, GetIntegerFunct
 static_assert(std::is_same<decltype(GetExtraPatchAction)*, GetExtraPatchActionType>::value, "Ensure calling convention doesn't change");
 
 static_assert(std::is_same<decltype(GetPatchInformationFunctions)*, GetPatchInformationFunctionsType>::value, "Ensure calling convention doesn't change");
+static_assert(std::is_same<decltype(DllPreLoadHook)*, DllPreLoadHookType>::value, "Ensure calling convention doesn't change");
