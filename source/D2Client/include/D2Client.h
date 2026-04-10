@@ -1,5 +1,14 @@
 #include "D2Common/include/Drlg/D2DrlgDrlg.h"
 #include "D2Common/include/Units/Units.h"
+#include <ENGINE/Cursor.h>
+#include <GAME/Game.h>
+#include <GAME/SCmd.h>
+#include <GAME/Select.h>
+#include <Skills/Skills.h>
+#include <UNIT/CUnit.h>
+#include <UI/automap.h>
+#include <UI/showitems.h>
+#include <UI/ui.h>
 
 //D2Client.0x6FAA0000
 
@@ -99,59 +108,8 @@ extern POINT g_D2CLIENT_offset;
 // D2Client + 0x111990 -> 6FBB1990
 extern BOOL p_D2Client_Automap_Is_Mini;
 
-// D2Client + 0x12970 -> D2Client.0x6FAB2970
-D2UnitStrc *__fastcall D2Client_sSCmd_UnitWarpXY(UnitWarpXY *arg);
-
-// D2Client + 0x1D330 -> 6FABD330
-void __fastcall D2Client_HandleDualWieldAlternateSwing(D2UnitStrc *pUnit, _DWORD *swingState);
-
-// D2Client + 0xA3B0 -> 6FAAA3B0
-DWORD __stdcall D2Client_OpenServerThread(LPVOID a1);
-
-// D2Client + 0xB370 -> 6FAAB370
-int D2Client_Main();
-
-// D2Client + 0x9AF0 -> 6FAA9AF0
-int __stdcall D2Client_InGame_Tick(); // Arguments not sure
-
-// D2Client + 0x9450 -> 0x6FAA9450
-int D2Client_AllocateGlobals();
-
-// D2Client + 0x883D0 -> D2Client.0x6FB283D0
-D2UnitStrc *D2Client_GetCurrentUnit();
-
-// D2Client + 0x15A20 -> 6FAB5A20
-D2UnitStrc *D2Client_GetSelectedItem();
-
 // D2Client + 0xBF80 -> 6FAABF80
 int D2Client_GameGetFrame();
-
-// D2Client + 0x15960 -> 6FAB5960
-BOOL D2Client_UpdateCameraOriginFromOpenPanels();
-
-// D2Client + 0x89370 -> 0x6FB29370
-D2ActiveRoomStrc *D2Client_GetCurrentUnitRoom();
-
-// D2Client + 0x80740 -> 6FB20740
-void __fastcall D2Client_GetDisplayItemText(D2UnitStrc *a1, Unicode *szItemName, int nSize);
-
-// D2Client + 0x869F0 -> 0x6FB269F0
-D2UnitStrc *__fastcall D2Client_GetUnitFromIndex(int dwUnitId, D2C_UnitTypes unitType);
-
-// D2Client + 0x86C90 -> 0x6FB26C90
-D2ActiveRoomStrc *__fastcall D2Client_GetRoomAtSubtileCoords(int32_t x, int32_t y);
-
-// D2Client + 0x886F0 -> 6FB286F0
-int __fastcall D2Client_UnitTestSelect(D2UnitStrc *pUnit, int a2, int a3, int a4);
-
-// D2Client + 0xB7BC0 -> 6FB57BC0
-int D2Client_GetMouseX();
-
-// D2Client + 0xB7BD0 -> 6FB57BD0
-int D2Client_GetMouseY();
-
-// D2Client + 0x88020 -> 6FB28020
-int D2Client_AllocateGlobalUnitTables();
 
 // D2Client + 0xC0805 -> 0x6FB60805
 int D2Client_sprintf(_BYTE *buffer, const char *format, ...);
@@ -174,54 +132,3 @@ char *__cdecl D2Client_strlen(_DWORD *str);
 // D2Client + 0xC2E48 -> 0x6FB62E48
 int __cdecl D2Client_format_float(int value, int buffer, int fmt_char, int precision, int flags);
 
-// D2Client + 0x28E0 -> 6FAA28E0
-void D2Client_DisplayPerformanceStatistics();
-
-// D2Client + 0x150B0 -> 6FAB50B0
-void D2Client_ParseGamePacket(uint8_t *pPacketBuffer, uint32_t nPacketSize);
-
-// D2Client + 0x897F0 -> 6FB297F0
-Unicode *__thiscall D2Client_GetUnitName(D2UnitStrc *this);
-
-// D2Client + 0x80740 -> 6FB20740
-ent_DisplayItemText(D2UnitStrc *a1, wchar_t *szItemName, int nSize);
-
-// D2Client + 0x69F60 -> 6FB09F60
-void __usercall D2Client_DrawGroundItemLabels(DrawMode drawMode@<edi>);
-
-// D2Client + 0x2ECF0 -> 6FACECF0
-void __fastcall D2Client_AutomapDrawDiamond(int nX, int nY, uint8_t nColor);
-
-// 1.13C :
-
-int D2Client_strcasecmp_locale(unsigned char* s1, unsigned char* s2)
-// sub_6FAB39C9
-// strcmp case-insensitive avec support locale (MBCS/Unicode)
-
-locale_t* D2Client_GetCurrentThreadLocale()
-// sub_6FAB72F7
-// Récupère/initialise la locale du thread via FlsGetValue/FlsSetValue
-
-locale_t* D2Client_GetGlobalLocale()
-// sub_6FAB7283
-// Récupère la locale globale du module (fallback)
-
-int D2Client_CharToLower_Locale(locale_t* pLocale, int codepoint)
-// sub_6FAB7604
-// toLower avec support MBCS et LCMapString Windows
-
-int D2Client_strcasecmp_ascii(char* s1, char* s2)
-// sub_6FAB76F0
-// strcmp case-insensitive ASCII pur (A-Z uniquement, pas de locale)
-
-void* D2Client_Alloc(size_t elementSize, size_t count)
-// sub_6FAB8797
-// Allocateur mémoire custom avec pool aligné 16 bytes + HeapAlloc fallback
-
-void D2Client_FatalError(int errorCode)
-// sub_6FAB46DA
-// Gestionnaire d'erreur fatale : log + exit 0xFF
-
-
-// D2Client + 0x707F0
-int __userpurge D2Client_ProcessUserMessage@<eax>(Unicode *str@<eax>, char *prompt@<edx>, int index);

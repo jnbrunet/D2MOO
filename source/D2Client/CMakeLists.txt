@@ -15,9 +15,12 @@ target_link_libraries(${D2ClientImplName}
 # Game
 target_sources(${D2ClientImplName}
   PRIVATE
-    src/DllMain.cpp
+    src/UI/automap.cpp
+    src/UNIT/CUnit.cpp
 
     include/D2Client.h
+    include/UI/automap.h
+    include/UNIT/CUnit.h
 )
 
 

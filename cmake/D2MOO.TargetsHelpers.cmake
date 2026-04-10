@@ -71,6 +71,7 @@ function(D2MOO_prepare_targets LibraryName)
     # We expose this library mainly for unit tests since we wouldn't be able to call non exported functions otherwise.
     add_library(${${LibraryName}ImplName} OBJECT)
     target_link_libraries(${LibraryName} PUBLIC ${${LibraryName}ImplName})
+    target_link_libraries(${LibraryName} PRIVATE D2CommonDefinitions)
   
     # Add src/DllMain.cpp since we build a .dll
     target_sources(${LibraryName} PRIVATE src/DllMain.cpp)
