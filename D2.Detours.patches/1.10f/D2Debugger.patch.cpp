@@ -15,6 +15,7 @@ extern "C" {
 static ExtraPatchAction D2GameExtraPatchActions[] = {
 #ifdef D2_VERSION_110F
 	{ 0x6FC386D0 - D2GameImageBase, &GAME_UpdateProgress_WithDebugger, PatchAction::FunctionReplaceOriginalByPatch, &GAME_UpdateProgress_Original},
+	{ 0x6FCBFE90 - D2GameImageBase, &SUNITDMG_ExecuteEvents_WithDebugger, PatchAction::FunctionReplaceOriginalByPatch, &SUNITDMG_ExecuteEvents_Original},
 #endif
     { 0, 0, PatchAction::Ignore}, // Here because we need at least one element in the array
 };

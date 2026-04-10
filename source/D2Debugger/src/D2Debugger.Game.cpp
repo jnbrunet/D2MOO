@@ -31,6 +31,18 @@ D2FUNC(D2Game, SpawnMonster_6FC69F10, D2UnitStrc*, __fastcall, (D2GameStrc* pGam
 // Using a define so that we break inline
 #define AddDebugBreakButton() do{ if (ImGui::Button(ICON_FA_HAMMER)) { __debugbreak(); }; } while(false)
 
+static bool gbGodModeEnabled = false;
+
+bool D2DebuggerIsGodModeEnabled()
+{
+    return gbGodModeEnabled;
+}
+
+void D2DebuggerSetGodModeEnabled(bool bEnabled)
+{
+    gbGodModeEnabled = bEnabled;
+}
+
 std::vector<char> GetUTF8CharBufferFromStringIndex(uint16_t index)
 {
     const Unicode* nameUnicode = (const Unicode*)D2LANG_GetStringFromTblIndex(index);
@@ -361,6 +373,8 @@ bool D2DebugGame(D2GameStrc* pGame)
 {
     if(ImGui::Begin("Game"))
     {
+        ImGui::Checkbox("God mode", &gbGodModeEnabled);
+
         if (*pGame->szGameName)
             ImGui::Text("Game: '%s'", pGame->szGameName);
         if (*pGame->szGameDesc)

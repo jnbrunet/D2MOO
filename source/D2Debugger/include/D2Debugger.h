@@ -15,3 +15,9 @@ void D2DebuggerDestroy();
 // return true if we should freeze the game update
 D2DEBUGGER_DLL_DECL
 bool D2DebugGame(struct D2GameStrc* pGame);
+
+D2DEBUGGER_DLL_DECL
+bool D2DebuggerIsGodModeEnabled();
+
+D2DEBUGGER_DLL_DECL
+void D2DebuggerSetGodModeEnabled(bool bEnabled);
