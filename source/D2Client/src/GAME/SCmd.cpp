@@ -40,7 +40,7 @@ namespace
 		D2ClientUnitPacketListStrc* pUnitPacketList = D2Client_GetUnitPacketList_6FB29450(pUnit);
 		if (!pUnitPacketList || pUnitPacketList->nCount + 1 == pUnitPacketList->nCapacity)
 		{
-			pUnitPacketList = D2Client_AllocatePacketListForUnit_6FAB54C0(pUnit);
+			pUnitPacketList = SCMD_AllocatePacketListForUnit(pUnit);
 		}
 
 		D2_ASSERTM(nPacketSize <= nPacketBufferSize, "nSize <= sgnMaxUnitPacketDataSize");
@@ -95,6 +95,15 @@ namespace
 	}
 }
 
+// D2Client + 0x10B9B0 -> 0x6FBAB9B0
+// Max per-packet buffer size, lazily initialized from the handlers table.
+#ifdef D2_VERSION_110F
+static int32_t& g_nSCmdPacketBufferSize = *reinterpret_cast<int32_t*>(0x6FBAB9B0);
+#else
+static int32_t g_nSCmdPacketBufferSizeStorage = 0;
+static int32_t& g_nSCmdPacketBufferSize = g_nSCmdPacketBufferSizeStorage;
+#endif
+
 void D2Client_SCmd_LoadOffsets()
 {
 	const uintptr_t nDllBase = uintptr_t(delayedD2ClientDllBaseGet());
@@ -110,7 +119,53 @@ void D2Client_SCmd_LoadOffsets()
 	D2Client_LargeGamePacketCount = reinterpret_cast<D2Client_LargeGamePacketCount_vt*>(nDllBase + 0x121B00);
 
 	D2Client_GetUnitPacketList_6FB29450 = reinterpret_cast<D2Client_GetUnitPacketList_6FB29450_t>(nDllBase + 0x89450);
-	D2Client_AllocatePacketListForUnit_6FAB54C0 = reinterpret_cast<D2Client_AllocatePacketListForUnit_6FAB54C0_t>(nDllBase + 0x154C0);
+	D2Client_SetUnitPacketList_6FB29480 = reinterpret_cast<D2Client_SetUnitPacketList_6FB29480_t>(nDllBase + 0x89480);
+}
+
+// D2Client.0x6FAB54C0 (RVA: 0x154C0)
+D2ClientUnitPacketListStrc* __fastcall SCMD_AllocatePacketListForUnit(D2UnitStrc* pUnit)
+{
+    // Step 1: lazily compute max packet buffer size from the handlers table on first call.
+    int32_t nMaxSize = g_nSCmdPacketBufferSize;
+    if (!g_nSCmdPacketBufferSize)
+    {
+        for (uint32_t i = 0; i < NUM_SCMDS; ++i)
+        {
+            if (D2Client_GamePacketHandlers[i].pfProcessUnit &&
+                (int32_t)D2Client_GamePacketHandlers[i].expectedSize > nMaxSize)
+            {
+                nMaxSize = (int32_t)D2Client_GamePacketHandlers[i].expectedSize;
+            }
+        }
+        g_nSCmdPacketBufferSize = nMaxSize + 5;
+    }
+
+    // Step 2: get or allocate the packet list header for this unit.
+    D2_ASSERT(pUnit);
+    auto* pPacketList = reinterpret_cast<D2ClientUnitPacketListStrc*>(pUnit->pPacketList);
+    if (!pPacketList)
+    {
+        pPacketList = D2_CALLOC_STRC(D2ClientUnitPacketListStrc);
+        D2_ASSERT(pUnit);
+        pUnit->pPacketList = reinterpret_cast<D2PacketListStrc*>(pPacketList);
+    }
+
+    // Step 3: grow the data buffer by 5 slots (capacity += 5).
+    const int32_t nNewCapacity = pPacketList->nCapacity + 5;
+    auto* pNewBuffer = static_cast<uint8_t*>(D2_ALLOC(nNewCapacity * g_nSCmdPacketBufferSize));
+    std::memset(pNewBuffer, 0, nNewCapacity * g_nSCmdPacketBufferSize);
+
+    // Step 4: copy existing packets from old buffer, then free it.
+    if (pPacketList->pPacketData)
+    {
+        std::memcpy(pNewBuffer, pPacketList->pPacketData,
+                    g_nSCmdPacketBufferSize * pPacketList->nCapacity);
+        D2_FREE(pPacketList->pPacketData);
+    }
+
+    pPacketList->nCapacity = nNewCapacity;
+    pPacketList->pPacketData = pNewBuffer;
+    return pPacketList;
 }
 
 //D2Client.0x6FAB50B0
@@ -151,7 +206,7 @@ void __fastcall SCMD_ParseGamePacket(uint8_t* pPacketBuffer, uint32_t nPacketSiz
 			D2_ASSERTM(false, "(ptMsgStruct->nCmdSize == -1) || (packetSize == ptMsgStruct->nCmdSize)");
 		}
 
-		if (pPacketDesc->flags)
+		if (pPacketDesc->pfProcessUnit)
 		{
 			if (D2UnitStrc* pUnit = GetPacketUnit(nCmd, pPacketBuffer))
 			{
@@ -197,3 +252,71 @@ void __fastcall SCMD_ParseGamePacket(uint8_t* pPacketBuffer, uint32_t nPacketSiz
 
 	++(*D2Client_CompletedGamePacketBatches);
 }
+
+// D2Client.0x6FAB55C0
+void __fastcall SCMD_FreeUnitPacketList(D2UnitStrc* pUnit)
+{
+	D2ClientUnitPacketListStrc* pPacketList = D2Client_GetUnitPacketList_6FB29450(pUnit);
+	if (!pPacketList)
+	{
+		return;
+	}
+
+	D2_FREE(pPacketList->pPacketData);
+	D2_FREE(pPacketList);
+	D2Client_SetUnitPacketList_6FB29480(pUnit, nullptr);
+}
+
+// D2Client.0x6FAB5610
+void __fastcall SCMD_ProcessUnitPackets(D2UnitStrc* pUnit)
+{
+	D2ClientUnitPacketListStrc* pPacketList = D2Client_GetUnitPacketList_6FB29450(pUnit);
+	if (!pPacketList)
+	{
+		return;
+	}
+
+	D2_ASSERTM(pPacketList->nCount <= pPacketList->nCapacity, "ptPacket");
+
+	int32_t i = 0;
+	if (static_cast<int32_t>(pPacketList->nCount) > 0)
+	{
+		while (true)
+		{
+			auto* pPacketBuffer = reinterpret_cast<D2PacketBufferStrc*>(
+				pPacketList->pPacketData + i * g_nSCmdPacketBufferSize);
+
+			int32_t nSize = 0;
+			if (!SERVER_GetServerPacketSize(pPacketBuffer, g_nSCmdPacketBufferSize, &nSize))
+			{
+				return;
+			}
+
+			const uint8_t nCmd = pPacketBuffer->data[0];
+			D2_ASSERTM(nCmd < NUM_SCMDS, "bCmd < NUM_SCMDS");
+
+			const GamePacketDesc* pPacketDesc = &D2Client_GamePacketHandlers[nCmd];
+			if (pPacketDesc->expectedSize != INVALID_PACKET_SIZE &&
+				static_cast<uint16_t>(nSize) != pPacketDesc->expectedSize)
+			{
+				D2_ASSERTM(false, "(ptMsgStruct->nCmdSize == -1) || (packetSize == ptMsgStruct->nCmdSize)");
+			}
+
+			D2_ASSERTM(pPacketDesc->pfProcessUnit != nullptr, "ptMsgStruct->pfProcessUnit");
+			pPacketDesc->pfProcessUnit(pUnit, pPacketBuffer);
+
+			// Re-read nCount: pfProcessUnit may have modified the queue
+			if (++i >= static_cast<int32_t>(pPacketList->nCount))
+			{
+				break;
+			}
+		}
+	}
+
+	if (pPacketList->nCount)
+	{
+		std::memset(pPacketList->pPacketData, 0, g_nSCmdPacketBufferSize * pPacketList->nCount);
+	}
+	pPacketList->nCount = 0;
+}
+

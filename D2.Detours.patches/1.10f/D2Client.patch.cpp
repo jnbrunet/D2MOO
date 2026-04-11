@@ -9,6 +9,9 @@
 extern struct D2UnitStrc* UNIT_GetCurrentUnit();
 extern struct D2ActiveRoomStrc* UNIT_GetCurrentUnitRoom();
 extern struct D2UnitStrc* __fastcall UNIT_GetUnitFromIndex(int dwUnitId, D2C_UnitTypes unitType);
+extern struct D2ClientUnitPacketListStrc* __fastcall SCMD_AllocatePacketListForUnit(struct D2UnitStrc* pUnit);
+extern void __fastcall SCMD_FreeUnitPacketList(struct D2UnitStrc* pUnit);
+extern void __fastcall SCMD_ProcessUnitPackets(struct D2UnitStrc* pUnit);
 
 //#define DISABLE_ALL_PATCHES
 
@@ -60,6 +63,9 @@ static ExtraPatchAction extraPatchActions[] = {
     { 0x6FB283D0 - D2ClientImageBase, &UNIT_GetCurrentUnit, PatchAction::FunctionReplacePatchByOriginal },
     { 0x6FB29370 - D2ClientImageBase, &UNIT_GetCurrentUnitRoom, PatchAction::FunctionReplacePatchByOriginal },
     { 0x6FB269F0 - D2ClientImageBase, &UNIT_GetUnitFromIndex, PatchAction::FunctionReplaceOriginalByPatch },
+    { 0x6FAB54C0 - D2ClientImageBase, &SCMD_AllocatePacketListForUnit, PatchAction::FunctionReplaceOriginalByPatch },
+    { 0x6FAB55C0 - D2ClientImageBase, &SCMD_FreeUnitPacketList, PatchAction::FunctionReplaceOriginalByPatch },
+    { 0x6FAB5610 - D2ClientImageBase, &SCMD_ProcessUnitPackets, PatchAction::FunctionReplaceOriginalByPatch },
     { 0x6FACC610 - D2ClientImageBase, &AUTOMAP_Layer_Load, PatchAction::FunctionReplacePatchByOriginal },
     { 0x6FACBCD0 - D2ClientImageBase, &AUTOMAP_Layer_Save, PatchAction::FunctionReplacePatchByOriginal },
 #endif
