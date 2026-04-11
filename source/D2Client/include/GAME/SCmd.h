@@ -39,7 +39,6 @@ D2VAR(D2Client, LargeGamePacketCount, uint32_t, 0x121B00);
 
 D2FUNC(D2Client, GetUnitPacketList_6FB29450, D2ClientUnitPacketListStrc*, __fastcall, (D2UnitStrc * pUnit), 0x89450);
 D2FUNC(D2Client, AllocatePacketListForUnit_6FAB54C0, D2ClientUnitPacketListStrc*, __fastcall, (D2UnitStrc * pUnit), 0x154C0);
-D2FUNC(D2Client, GetUnitFromIndex_6FB269F0, D2UnitStrc*, __fastcall, (int32_t nUnitGUID, D2C_UnitTypes nUnitType), 0x869F0);
 
 void D2Client_SetOriginalModuleBase(void* hOriginalModule);
 void D2Client_LoadOffsets();

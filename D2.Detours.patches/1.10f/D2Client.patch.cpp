@@ -4,11 +4,11 @@
 
 #include <GAME/SCmd.h>
 #include <UI/automap.h>
+
 // Forward declarations for UNIT functions defined in CUnit.cpp
 extern struct D2UnitStrc* UNIT_GetCurrentUnit();
 extern struct D2ActiveRoomStrc* UNIT_GetCurrentUnitRoom();
-
-extern struct D2UnitStrc* g_pCurrentUnit;
+extern struct D2UnitStrc* __fastcall UNIT_GetUnitFromIndex(int dwUnitId, D2C_UnitTypes unitType);
 
 //#define DISABLE_ALL_PATCHES
 
@@ -57,17 +57,9 @@ static ExtraPatchAction extraPatchActions[] = {
     { 0x6FACD560 - D2ClientImageBase, &AUTOMAP_AVL_AddObject, PatchAction::FunctionReplaceOriginalByPatch },
     { 0x6FACD660 - D2ClientImageBase, &AUTOMAP_RevealRoom, PatchAction::FunctionReplaceOriginalByPatch },
 
-    { 0x6FBAF990 - D2ClientImageBase, &g_AutomapCellGroupByNo, PatchAction::PointerReplacePatchByOriginal },
-    { 0x6FBB1998 - D2ClientImageBase, &g_pAutomapDataPool, PatchAction::PointerReplacePatchByOriginal },
-    { 0x6FBB199C - D2ClientImageBase, &g_nAutomapDataCount, PatchAction::PointerReplacePatchByOriginal },
-    { 0x6FBB19E4 - D2ClientImageBase, &g_nAutomapUpdateCounter, PatchAction::PointerReplacePatchByOriginal },
-    { 0x6FBB1A3C - D2ClientImageBase, &g_CurrentUnitClientCoordX, PatchAction::PointerReplacePatchByOriginal },
-    { 0x6FBB1A40 - D2ClientImageBase, &g_CurrentUnitClientCoordY, PatchAction::PointerReplacePatchByOriginal },
-    { 0x6FBB1A34 - D2ClientImageBase, &g_PreviousUnitClientCoordX, PatchAction::PointerReplacePatchByOriginal },
-    { 0x6FBB1A38 - D2ClientImageBase, &g_PreviousUnitClientCoordY, PatchAction::PointerReplacePatchByOriginal },
-    { 0x6FBBC200 - D2ClientImageBase, &g_pCurrentUnit, PatchAction::PointerReplacePatchByOriginal },
     { 0x6FB283D0 - D2ClientImageBase, &UNIT_GetCurrentUnit, PatchAction::FunctionReplacePatchByOriginal },
     { 0x6FB29370 - D2ClientImageBase, &UNIT_GetCurrentUnitRoom, PatchAction::FunctionReplacePatchByOriginal },
+    { 0x6FB269F0 - D2ClientImageBase, &UNIT_GetUnitFromIndex, PatchAction::FunctionReplaceOriginalByPatch },
     { 0x6FACC610 - D2ClientImageBase, &AUTOMAP_Layer_Load, PatchAction::FunctionReplacePatchByOriginal },
     { 0x6FACBCD0 - D2ClientImageBase, &AUTOMAP_Layer_Save, PatchAction::FunctionReplacePatchByOriginal },
 #endif

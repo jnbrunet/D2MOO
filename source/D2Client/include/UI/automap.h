@@ -39,19 +39,22 @@ struct D2AutomapLayerStrc
     D2AutomapLayerStrc* pNext;
 };
 
-extern uint32_t* g_AutomapCellGroupByNo;
-extern AutomapDataBlock* g_pAutomapDataPool;
-extern int g_nAutomapDataCount;
+// D2Client + 0x10F990 -> 0x6FBAF990
+extern uint32_t*& g_AutomapCellGroupByNo;
+// D2Client + 0x111998 -> 0x6FBB1998
+extern AutomapDataBlock*& g_pAutomapDataPool;
+// D2Client + 0x11199C -> 0x6FBB199C
+extern int& g_nAutomapDataCount;
 // D2Client + 0x1119E4 -> 0x6FBB19E4
-extern int g_nAutomapUpdateCounter;
+extern int& g_nAutomapUpdateCounter;
 // D2Client + 0x111A3C -> 0x6FBB1A3C
-extern int g_CurrentUnitClientCoordX;
+extern int& g_CurrentUnitClientCoordX;
 // D2Client + 0x111A40 -> 0x6FBB1A40
-extern int g_CurrentUnitClientCoordY;
+extern int& g_CurrentUnitClientCoordY;
 // D2Client + 0x111A34 -> 0x6FBB1A34
-extern int g_PreviousUnitClientCoordX;
+extern int& g_PreviousUnitClientCoordX;
 // D2Client + 0x111A38 -> 0x6FBB1A38
-extern int g_PreviousUnitClientCoordY;
+extern int& g_PreviousUnitClientCoordY;
 // D2Client + 0x1119A0 -> 0x6FBB19A0
 extern D2AutomapLayerStrc*& g_pAutomapLayers;
 // D2Client + 0x1119A4 -> 0x6FBB19A4

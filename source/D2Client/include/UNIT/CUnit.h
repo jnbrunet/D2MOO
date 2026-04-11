@@ -7,7 +7,11 @@ struct D2ActiveRoomStrc;
 enum D2C_UnitTypes : int;
 
 // D2Client + 0x11C200 -> 0x6FBBC200
-extern D2UnitStrc* g_pCurrentUnit;
+extern D2UnitStrc*& g_pCurrentUnit;
+
+// D2Client + 0x11AA00 -> 0x6FBBAA00
+// Pointer to the GlobalUnitTables array (set by D2Client_LoadOffsets)
+extern D2UnitStrc** g_GlobalUnitTables;
 
 // D2Client.0x6FB283D0 (RVA: 0x883D0)
 D2UnitStrc* UNIT_GetCurrentUnit();

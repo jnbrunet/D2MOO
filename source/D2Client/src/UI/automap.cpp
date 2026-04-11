@@ -162,19 +162,40 @@ int GetUnitAutomapCellNumber(D2UnitStrc* pUnit, D2ActiveRoomStrc* pRoom)
 }
 
 }
-uint32_t* g_AutomapCellGroupByNo;
-AutomapDataBlock* g_pAutomapDataPool;
-int g_nAutomapDataCount;
-// D2Client + 0x1119E4 -> 0x6FBB19E4
-int g_nAutomapUpdateCounter;
-// D2Client + 0x111A3C -> 0x6FBB1A3C
-int g_CurrentUnitClientCoordX;
-// D2Client + 0x111A40 -> 0x6FBB1A40
-int g_CurrentUnitClientCoordY;
-// D2Client + 0x111A34 -> 0x6FBB1A34
-int g_PreviousUnitClientCoordX;
-// D2Client + 0x111A38 -> 0x6FBB1A38
-int g_PreviousUnitClientCoordY;
+#ifdef D2_VERSION_110F
+// Direct aliases to original D2Client globals (1.10f).
+// This avoids value copies and keeps reads/writes synchronized with game memory.
+// To switch to own storage: replace the right-hand side with a local variable reference.
+uint32_t*&       g_AutomapCellGroupByNo   = *reinterpret_cast<uint32_t**>      (0x6FBAF990);
+AutomapDataBlock*& g_pAutomapDataPool     = *reinterpret_cast<AutomapDataBlock**>(0x6FBB1998);
+int&             g_nAutomapDataCount      = *reinterpret_cast<int*>             (0x6FBB199C);
+int&             g_nAutomapUpdateCounter  = *reinterpret_cast<int*>             (0x6FBB19E4);
+int&             g_CurrentUnitClientCoordX  = *reinterpret_cast<int*>           (0x6FBB1A3C);
+int&             g_CurrentUnitClientCoordY  = *reinterpret_cast<int*>           (0x6FBB1A40);
+int&             g_PreviousUnitClientCoordX = *reinterpret_cast<int*>           (0x6FBB1A34);
+int&             g_PreviousUnitClientCoordY = *reinterpret_cast<int*>           (0x6FBB1A38);
+#else
+namespace
+{
+uint32_t*        g_AutomapCellGroupByNoStorage    = nullptr;
+AutomapDataBlock* g_pAutomapDataPoolStorage       = nullptr;
+int              g_nAutomapDataCountStorage       = 0;
+int              g_nAutomapUpdateCounterStorage   = 0;
+int              g_CurrentUnitClientCoordXStorage  = 0;
+int              g_CurrentUnitClientCoordYStorage  = 0;
+int              g_PreviousUnitClientCoordXStorage = 0;
+int              g_PreviousUnitClientCoordYStorage = 0;
+}
+uint32_t*&        g_AutomapCellGroupByNo    = g_AutomapCellGroupByNoStorage;
+AutomapDataBlock*& g_pAutomapDataPool      = g_pAutomapDataPoolStorage;
+int&              g_nAutomapDataCount      = g_nAutomapDataCountStorage;
+int&              g_nAutomapUpdateCounter  = g_nAutomapUpdateCounterStorage;
+int&              g_CurrentUnitClientCoordX  = g_CurrentUnitClientCoordXStorage;
+int&              g_CurrentUnitClientCoordY  = g_CurrentUnitClientCoordYStorage;
+int&              g_PreviousUnitClientCoordX = g_PreviousUnitClientCoordXStorage;
+int&              g_PreviousUnitClientCoordY = g_PreviousUnitClientCoordYStorage;
+#endif
+
 #if defined(D2_VERSION_110F)
 // Direct aliases to original D2Client globals (1.10f):
 //   0x6FBB19A0 -> g_pAutomapLayers
