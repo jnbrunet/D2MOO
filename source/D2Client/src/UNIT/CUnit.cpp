@@ -7,13 +7,13 @@
 D2UnitStrc* g_pCurrentUnit = nullptr;
 
 // D2Client.0x6FB283D0 (RVA: 0x883D0)
-D2UnitStrc* D2Client_GetCurrentUnit()
+D2UnitStrc* UNIT_GetCurrentUnit()
 {
     return g_pCurrentUnit;
 }
 
 // D2Client.0x6FB29370 (RVA: 0x89370)
-D2ActiveRoomStrc* D2Client_GetCurrentUnitRoom()
+D2ActiveRoomStrc* UNIT_GetCurrentUnitRoom()
 {
     D2UnitStrc* pUnit = g_pCurrentUnit;
     if (!pUnit)

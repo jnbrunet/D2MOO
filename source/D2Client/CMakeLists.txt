@@ -26,5 +26,8 @@ target_sources(${D2ClientImplName}
     include/UNIT/CUnit.h
 )
 
+if(D2MOO_AUTO_COPY_PATCH_DLLS)
+  D2MOO_copy_target_to_patch_dir(D2Client)
+endif()
 
 D2MOO_target_source_group(D2Client)

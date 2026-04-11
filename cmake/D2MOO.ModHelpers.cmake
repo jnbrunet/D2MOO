@@ -1,3 +1,51 @@
+function(D2MOO_get_patch_output_dir OutVar)
+  if(D2MOO_PATCH_OUTPUT_DIR)
+    set(PatchDir "${D2MOO_PATCH_OUTPUT_DIR}")
+  else()
+    set(PatchDir "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_BINDIR}/patch")
+  endif()
+
+  set(${OutVar} "${PatchDir}" PARENT_SCOPE)
+endfunction()
+
+function(D2MOO_get_detours_patch_dir OutVar DLLTargetName)
+  if(D2MOO_AUTO_COPY_PATCH_DLLS)
+    D2MOO_get_patch_output_dir(PatchDir)
+  else()
+    set(PatchDir "$<TARGET_FILE_DIR:${DLLTargetName}>")
+  endif()
+
+  set(${OutVar} "${PatchDir}" PARENT_SCOPE)
+endfunction()
+
+function(D2MOO_copy_target_to_patch_dir DLLTargetName)
+  if(NOT TARGET ${DLLTargetName})
+    message(FATAL_ERROR "Unknown target '${DLLTargetName}' passed to D2MOO_copy_target_to_patch_dir")
+  endif()
+
+  D2MOO_get_patch_output_dir(PatchDir)
+  set(CopyPdbScript "${CMAKE_CURRENT_BINARY_DIR}/D2MOO.CopyPdb.${DLLTargetName}.$<CONFIG>.cmake")
+
+  add_custom_command(TARGET ${DLLTargetName} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E make_directory "${PatchDir}"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+      "$<TARGET_FILE:${DLLTargetName}>"
+      "${PatchDir}/$<TARGET_FILE_NAME:${DLLTargetName}>"
+    VERBATIM
+  )
+
+  if(MSVC)
+    file(GENERATE
+      OUTPUT "${CopyPdbScript}"
+      CONTENT "if(EXISTS [==[$<TARGET_PDB_FILE:${DLLTargetName}>]==])\n  file(MAKE_DIRECTORY [==[${PatchDir}]==])\n  execute_process(\n    COMMAND [==[${CMAKE_COMMAND}]==] -E copy_if_different [==[$<TARGET_PDB_FILE:${DLLTargetName}>]==] [==[${PatchDir}/$<TARGET_PDB_FILE_NAME:${DLLTargetName}>]==]\n    COMMAND_ERROR_IS_FATAL ANY\n  )\nendif()\n"
+    )
+
+    add_custom_command(TARGET ${DLLTargetName} POST_BUILD
+      COMMAND ${CMAKE_COMMAND} -P "${CopyPdbScript}"
+      VERBATIM
+    )
+  endif()
+endfunction()
 
 function(D2MOO_register_detours_patch_if_exists DLLTargetName)
   if(ARGV1)
@@ -30,10 +78,12 @@ function(D2MOO_register_detours_patch_if_exists DLLTargetName)
   target_link_libraries(${DLLTargetName} PRIVATE D2.Detours)
   add_dependencies(${DLLTargetName} D2.DetoursLauncher)
 
+  D2MOO_get_detours_patch_dir(DebugPatchDir ${DLLTargetName})
+
   set_target_properties(${DLLTargetName}
     PROPERTIES
       VS_DEBUGGER_COMMAND $<TARGET_FILE:D2.DetoursLauncher>
-      VS_DEBUGGER_ENVIRONMENT "DIABLO2_PATCH=$<TARGET_FILE_DIR:${DLLTargetName}>"
+      VS_DEBUGGER_ENVIRONMENT "DIABLO2_PATCH=${DebugPatchDir}"
   )
 
   if(D2_EXE)

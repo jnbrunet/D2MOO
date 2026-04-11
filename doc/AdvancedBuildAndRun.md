@@ -17,7 +17,7 @@ You can generate a VS solution (in `out/build/VS20XX`) using the command-line:
 cmake --preset DefaultGenerator
 # Build the release config
 cmake --build --preset DefaultGenerator --config Release
-# Install
+# Optional install/package step
 cmake --build --preset DefaultGenerator --config Release --target install
 ```
 and/or using the CMake GUI to configure and modify compilation options:
@@ -37,9 +37,15 @@ If you do not wish to use the presets:
 cmake -A Win32 -B YOU_BUILD_DIR
 # Build the release config
 cmake --build YOU_BUILD_DIR --config Release
-# Install
+# Optional install/package step
 cmake --install YOU_BUILD_DIR --config Release --prefix YOUR_INSTALL_FOLDER
 ```
+
+By default, the reconstructed patch DLLs that are normally installed under `bin/patch` are now also copied there automatically after each build, so running `install` is no longer required between iterations just to refresh the patch folder. This currently includes `D2Client`, `D2Common`, `D2Game`, and `D2Debugger`.
+
+- Default build-time patch destination: `${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_BINDIR}/patch`
+- Override it with the `D2MOO_PATCH_OUTPUT_DIR` CMake cache variable
+- Disable automatic syncing with `D2MOO_AUTO_COPY_PATCH_DLLS=OFF`
 
 ## "Open Folder" and Visual Studio Code
 

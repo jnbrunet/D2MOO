@@ -32,6 +32,11 @@ if(MSVC)
   target_compile_options(D2.DetoursLauncher PRIVATE $<$<CONFIG:Debug>:/Zi>)
   target_link_options(D2.DetoursLauncher PRIVATE $<$<CONFIG:Debug>:/DEBUG>)
 endif()
+
+if(D2MOO_AUTO_COPY_PATCH_DLLS)
+  D2MOO_copy_target_to_patch_dir(D2Debugger)
+endif()
+
 install(FILES "$<TARGET_PDB_FILE:D2.DetoursLauncher>"
   DESTINATION ${CMAKE_INSTALL_BINDIR}
   OPTIONAL

@@ -109,26 +109,26 @@ extern POINT g_D2CLIENT_offset;
 extern BOOL p_D2Client_Automap_Is_Mini;
 
 // D2Client + 0xBF80 -> 6FAABF80
-int D2Client_GameGetFrame();
+int GAME_GetFrame();
 
 // D2Client + 0xC0805 -> 0x6FB60805
-int D2Client_sprintf(_BYTE *buffer, const char *format, ...);
+int D2CLIENT_sprintf(_BYTE *buffer, const char *format, ...);
 
 // D2Client + 0xC2EBE -> 0x6FB62EBE
-int __cdecl D2Client_buf_overflow(unsigned __int8 c, _DWORD *stream_ctx);
+int __cdecl D2CLIENT_buf_overflow(unsigned __int8 c, _DWORD *stream_ctx);
 
 // D2Client + 0xC2FD6 -> 0x6FB62FD6
-int __cdecl D2Client_vsnprintf(int *stream_ctx, const char *format, va_list args);
+int __cdecl D2CLIENT_vsnprintf(int *stream_ctx, const char *format, va_list args);
 
 // D2Client + 0xC3717 -> 0x6FB63717
-_DWORD *__cdecl D2Client_putchar_buf(unsigned __int8 c, _DWORD *stream_ctx, _DWORD *pCount);
+_DWORD *__cdecl D2CLIENT_putchar_buf(unsigned __int8 c, _DWORD *stream_ctx, _DWORD *pCount);
 
 // D2Client + 0xC37B5 -> 0x6FB637B5
-int __cdecl D2Client_va_arg_int(va_list *ap);
+int __cdecl D2CLIENT_va_arg_int(va_list *ap);
 
 // D2Client + 0xC42A0 -> 0x6FB642A0
-char *__cdecl D2Client_strlen(_DWORD *str);
+char *__cdecl D2CLIENT_strlen(_DWORD *str);
 
 // D2Client + 0xC2E48 -> 0x6FB62E48
-int __cdecl D2Client_format_float(int value, int buffer, int fmt_char, int precision, int flags);
+int __cdecl D2CLIENT_format_float(int value, int buffer, int fmt_char, int precision, int flags);
 

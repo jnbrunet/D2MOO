@@ -4,15 +4,11 @@
 
 #include <GAME/SCmd.h>
 #include <UI/automap.h>
+// Forward declarations for UNIT functions defined in CUnit.cpp
+extern struct D2UnitStrc* UNIT_GetCurrentUnit();
+extern struct D2ActiveRoomStrc* UNIT_GetCurrentUnitRoom();
 
-// Defined in CUnit.cpp
 extern struct D2UnitStrc* g_pCurrentUnit;
-extern struct D2UnitStrc* D2Client_GetCurrentUnit();
-extern struct D2ActiveRoomStrc* D2Client_GetCurrentUnitRoom();
-// Defined in automap.cpp
-extern int D2Client_InitAutomapLayer();
-extern void D2Client_AutomapLayer_Load();
-extern void D2Client_AutomapLayer_Save();
 
 //#define DISABLE_ALL_PATCHES
 
@@ -52,14 +48,14 @@ static const int D2ClientImageBase = 0x6FAA0000;
 
 static ExtraPatchAction extraPatchActions[] = {
 #ifdef D2_VERSION_110F
-    { 0x6FAB50B0 - D2ClientImageBase, &D2Client_ParseGamePacket, PatchAction::FunctionReplaceOriginalByPatch },
-    { 0x6FACBA40 - D2ClientImageBase, &D2Client_AutomapDataPool_Alloc, PatchAction::FunctionReplaceOriginalByPatch },
-    { 0x6FACBAF0 - D2ClientImageBase, &D2Client_InitAutomapLayer, PatchAction::FunctionReplaceOriginalByPatch },
-    { 0x6FACCD50 - D2ClientImageBase, &D2Client_AutomapAVL_Insert, PatchAction::FunctionReplaceOriginalByPatch },
-    { 0x6FACD180 - D2ClientImageBase, &D2Client_AutomapRevealLayerRoom, PatchAction::FunctionReplaceOriginalByPatch },
-    { 0x6FACD3C0 - D2ClientImageBase, &D2Client_AutomapAddTileCell, PatchAction::FunctionReplaceOriginalByPatch },
-    { 0x6FACD560 - D2ClientImageBase, &D2Client_AutomapAddObjectCell, PatchAction::FunctionReplaceOriginalByPatch },
-    { 0x6FACD660 - D2ClientImageBase, &D2Client_AutomapRevealRoom, PatchAction::FunctionReplaceOriginalByPatch },
+    { 0x6FAB50B0 - D2ClientImageBase, &SCMD_ParseGamePacket, PatchAction::FunctionReplaceOriginalByPatch },
+    { 0x6FACBA40 - D2ClientImageBase, &AUTOMAP_AllocCell, PatchAction::FunctionReplaceOriginalByPatch },
+    { 0x6FACBAF0 - D2ClientImageBase, &AUTOMAP_Update, PatchAction::FunctionReplaceOriginalByPatch },
+    { 0x6FACCD50 - D2ClientImageBase, &AUTOMAP_AVL_Insert, PatchAction::FunctionReplaceOriginalByPatch },
+    { 0x6FACD180 - D2ClientImageBase, &AUTOMAP_RevealLayerRoom, PatchAction::FunctionReplaceOriginalByPatch },
+    { 0x6FACD3C0 - D2ClientImageBase, &AUTOMAP_AVL_AddTile, PatchAction::FunctionReplaceOriginalByPatch },
+    { 0x6FACD560 - D2ClientImageBase, &AUTOMAP_AVL_AddObject, PatchAction::FunctionReplaceOriginalByPatch },
+    { 0x6FACD660 - D2ClientImageBase, &AUTOMAP_RevealRoom, PatchAction::FunctionReplaceOriginalByPatch },
 
     { 0x6FBAF990 - D2ClientImageBase, &g_AutomapCellGroupByNo, PatchAction::PointerReplacePatchByOriginal },
     { 0x6FBB1998 - D2ClientImageBase, &g_pAutomapDataPool, PatchAction::PointerReplacePatchByOriginal },
@@ -70,10 +66,10 @@ static ExtraPatchAction extraPatchActions[] = {
     { 0x6FBB1A34 - D2ClientImageBase, &g_PreviousUnitClientCoordX, PatchAction::PointerReplacePatchByOriginal },
     { 0x6FBB1A38 - D2ClientImageBase, &g_PreviousUnitClientCoordY, PatchAction::PointerReplacePatchByOriginal },
     { 0x6FBBC200 - D2ClientImageBase, &g_pCurrentUnit, PatchAction::PointerReplacePatchByOriginal },
-    { 0x6FB283D0 - D2ClientImageBase, &D2Client_GetCurrentUnit, PatchAction::FunctionReplacePatchByOriginal },
-    { 0x6FB29370 - D2ClientImageBase, &D2Client_GetCurrentUnitRoom, PatchAction::FunctionReplacePatchByOriginal },
-    { 0x6FACC610 - D2ClientImageBase, &D2Client_AutomapLayer_Load, PatchAction::FunctionReplacePatchByOriginal },
-    { 0x6FACBCD0 - D2ClientImageBase, &D2Client_AutomapLayer_Save, PatchAction::FunctionReplacePatchByOriginal },
+    { 0x6FB283D0 - D2ClientImageBase, &UNIT_GetCurrentUnit, PatchAction::FunctionReplacePatchByOriginal },
+    { 0x6FB29370 - D2ClientImageBase, &UNIT_GetCurrentUnitRoom, PatchAction::FunctionReplacePatchByOriginal },
+    { 0x6FACC610 - D2ClientImageBase, &AUTOMAP_Layer_Load, PatchAction::FunctionReplacePatchByOriginal },
+    { 0x6FACBCD0 - D2ClientImageBase, &AUTOMAP_Layer_Save, PatchAction::FunctionReplacePatchByOriginal },
 #endif
     { 0, 0, PatchAction::Ignore },
 };

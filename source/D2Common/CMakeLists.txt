@@ -210,4 +210,8 @@ if(D2MOO_WITH_STATIC_TESTS)
   )
 endif()
 
+if(D2MOO_AUTO_COPY_PATCH_DLLS)
+  D2MOO_copy_target_to_patch_dir(D2Common)
+endif()
+
 D2MOO_target_source_group(D2Common)

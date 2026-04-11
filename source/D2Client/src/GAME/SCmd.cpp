@@ -172,7 +172,7 @@ void D2Client_SCmd_LoadOffsets()
 }
 
 //D2Client.0x6FAB50B0
-void __fastcall D2Client_ParseGamePacket(uint8_t* pPacketBuffer, uint32_t nPacketSize)
+void __fastcall SCMD_ParseGamePacket(uint8_t* pPacketBuffer, uint32_t nPacketSize)
 {
 	const uintptr_t nDllBase = uintptr_t(delayedD2ClientDllBaseGet());
 	if (!nDllBase)

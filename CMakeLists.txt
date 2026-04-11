@@ -32,6 +32,8 @@ if(D2MOO_IS_ROOT_PROJECT) # Let parent project decide wether to use its own patc
 endif()	
 
 option(D2MOO_INSTALL "Should we install the D2MOO targets?" ${D2MOO_IS_ROOT_PROJECT})
+option(D2MOO_AUTO_COPY_PATCH_DLLS "Copy reconstructed patch DLLs into the patch folder after each build" ON)
+set(D2MOO_PATCH_OUTPUT_DIR "" CACHE PATH "Patch folder populated at build time. Defaults to <install-prefix>/<bindir>/patch.")
 option(D2MOO_WITH_STATIC_TESTS "Enable static tests for struct layouts. Use for original game only, not mods." ON)
 cmake_dependent_option(D2MOO_BUILD_TESTS
     "Enable D2Moo project tests targets" ON # By default we want tests if CTest is enabled
@@ -64,6 +66,8 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 add_subdirectory(external)
 
 add_subdirectory(source)
+
+set(D2MOO_PATCH_TARGETS D2Client D2Common D2Game D2Debugger)
 
 if(ENABLE_D2DETOURS_EMBEDDED_PATCHES AND D2DETOURS_EMBEDDED_PATCHES_DIR)
   add_subdirectory(${D2DETOURS_EMBEDDED_PATCHES_DIR} ${D2DETOURS_EMBEDDED_PATCHES_BINARY_DIR})
@@ -98,11 +102,10 @@ if(${D2MOO_INSTALL})
   
   install(TARGETS D2.DetoursLauncher D2.Detours)
   
-  set(D2MOO_TARGETS_TO_INSTALL D2Common D2Game D2Debugger)
-  install(TARGETS ${D2MOO_TARGETS_TO_INSTALL}
+  install(TARGETS ${D2MOO_PATCH_TARGETS}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}/patch
   )
-  foreach(TARGET_TO_INSTALL IN LISTS D2MOO_TARGETS_TO_INSTALL)
+  foreach(TARGET_TO_INSTALL IN LISTS D2MOO_PATCH_TARGETS)
     install(FILES "$<$<STREQUAL:$<TARGET_PROPERTY:${TARGET_TO_INSTALL},TYPE>,SHARED_LIBRARY>:$<TARGET_PDB_FILE:${TARGET_TO_INSTALL}>>"
       DESTINATION ${CMAKE_INSTALL_BINDIR}/patch
       OPTIONAL

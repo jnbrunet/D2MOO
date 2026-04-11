@@ -9,7 +9,7 @@ struct D2UnitStrc;
 
 struct D2AutomapCellStrc;
 
-// Backing pool used by D2Client_AutomapDataPool_Alloc.
+// Backing pool used by AUTOMAP_AllocCell.
 struct AutomapDataBlock
 {
     D2AutomapCellStrc* pEntries;
@@ -58,21 +58,21 @@ extern D2AutomapLayerStrc*& g_pAutomapLayers;
 extern D2AutomapLayerStrc*& g_pCurrentAutomapLayer;
 
 // D2Client.0x6FACBA40 (RVA: 0x2BA40)
-D2AutomapCellStrc* D2Client_AutomapDataPool_Alloc();
+D2AutomapCellStrc* AUTOMAP_AllocCell();
 // D2Client.0x6FACBAF0 (RVA: 0x2BAF0)
-int D2Client_AutomapUpdate();
+int AUTOMAP_Update();
 // D2Client.0x6FACCD50 (RVA: 0x2CD50)
-int __fastcall D2Client_AutomapAVL_Insert(D2AutomapCellStrc* pNewCell, D2AutomapCellStrc** ppTreeRoot);
+int __fastcall AUTOMAP_AVL_Insert(D2AutomapCellStrc* pNewCell, D2AutomapCellStrc** ppTreeRoot);
 // D2Client.0x6FACD3C0 (RVA: 0x2D3C0)
-int __fastcall D2Client_AutomapAddTileCell(D2DrlgTileDataStrc* pTileData, D2DrlgRoomStrc* pDrlgRoom, D2AutomapCellStrc** ppCellTree);
+int __fastcall AUTOMAP_AVL_AddTile(D2DrlgTileDataStrc* pTileData, D2DrlgRoomStrc* pDrlgRoom, D2AutomapCellStrc** ppCellTree);
 // D2Client.0x6FACD560 (RVA: 0x2D560)
-int __fastcall D2Client_AutomapAddObjectCell(D2UnitStrc* pUnit, int nAutomapCellNumber, D2AutomapCellStrc** ppCellTree);
+int __fastcall AUTOMAP_AVL_AddObject(D2UnitStrc* pUnit, int nAutomapCellNumber, D2AutomapCellStrc** ppCellTree);
 // D2Client.0x6FACD180 (RVA: 0x2D180)
-void __fastcall D2Client_AutomapRevealLayerRoom(D2ActiveRoomStrc* pRoom, int bClipFlag, D2AutomapLayerStrc* pLayer);
+void __fastcall AUTOMAP_RevealLayerRoom(D2ActiveRoomStrc* pRoom, int bClipFlag, D2AutomapLayerStrc* pLayer);
 // D2Client.0x6FACD660 (RVA: 0x2D660)
-void __stdcall D2Client_AutomapRevealRoom(D2ActiveRoomStrc* pRoom);
-void __fastcall D2Client_AutomapDrawDiamond(int nX, int nY, uint8_t nColor);
+void __stdcall AUTOMAP_RevealRoom(D2ActiveRoomStrc* pRoom);
+void __fastcall AUTOMAP_DrawDiamond(int nX, int nY, uint8_t nColor);
 // D2Client.0x6FACC610 (RVA: 0x2C610)
-void D2Client_AutomapLayer_Load();
+void AUTOMAP_Layer_Load();
 // D2Client.0x6FACBCD0 (RVA: 0x2BCD0)
-void D2Client_AutomapLayer_Save();
+void AUTOMAP_Layer_Save();
