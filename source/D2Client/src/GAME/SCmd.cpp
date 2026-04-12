@@ -122,6 +122,75 @@ void D2Client_SCmd_LoadOffsets()
 	D2Client_SetUnitPacketList_6FB29480 = reinterpret_cast<D2Client_SetUnitPacketList_6FB29480_t>(nDllBase + 0x89480);
 }
 
+// TODO: reconstruct - D2Client + 0x11CB0
+void __fastcall SCMD_HandleSystemPacket(uint8_t* /*pPacketBuffer*/, int /*nPacketSize*/) {}
+
+// TODO: reconstruct - D2Client + 0x12190
+void __fastcall SCMD_GameLoad(uint8_t* /*pPacketBuffer*/) {}
+
+// TODO: reconstruct - D2Client + 0x122A0
+void __fastcall SCMD_SetClientIsInSight(uint8_t* /*pPacketBuffer*/) {}
+
+// TODO: reconstruct - D2Client + 0x12310
+void __fastcall SCMD_UnsetClientIsInSight(uint8_t* /*pPacketBuffer*/) {}
+
+// TODO: reconstruct - D2Client + 0x12970
+D2UnitStrc* __fastcall SCMD_UnitWarpXY(UnitWarpXY* /*arg*/) { return nullptr; }
+
+// TODO: reconstruct - D2Client + 0x12A80 (pfProcessUnit)
+void __fastcall SCMD_ReassignUnit(D2UnitStrc* /*pUnit*/, D2PacketBufferStrc* /*pPacketBuffer*/) {}
+
+// TODO: reconstruct - D2Client + 0x12B00
+void __fastcall SCMD_MultipleSetAttributes(uint8_t* /*pPacketBuffer*/) {}
+
+// TODO: reconstruct - D2Client + 0x12F10
+void __fastcall SCMD_SetAttribute(uint8_t* /*pPacketBuffer*/) {}
+
+// TODO: reconstruct - D2Client + 0x13570
+void __fastcall SCMD_SKILLS_AssignSkill(uint8_t* /*pPacketBuffer*/) {}
+
+// TODO: reconstruct - D2Client + 0x13610
+void __fastcall SCMD_UpdateUnitEx(uint8_t* /*pPacketBuffer*/) {}
+
+// TODO: reconstruct - D2Client + 0x13670
+void __fastcall SCMD_SKILLS_SetQuantity(uint8_t* /*pPacketBuffer*/) {}
+
+// TODO: reconstruct - D2Client + 0x13E90
+void __fastcall SCMD_UNITS_SetPlayerPortalFlags(uint8_t* /*pPacketBuffer*/) {}
+
+// TODO: reconstruct - D2Client + 0x13ED0
+void __fastcall SCMD_UNITS_SetObjectPortalFlags(uint8_t* /*pPacketBuffer*/) {}
+
+// TODO: reconstruct - D2Client + 0x143E0
+void __fastcall SCMD_WeaponSwap(uint8_t* /*pPacketBuffer*/) {}
+
+// TODO: reconstruct - D2Client + 0x14420
+void __fastcall SCMD_UnitAction(uint8_t* /*pPacketBuffer*/) {}
+
+// TODO: reconstruct - D2Client + 0x14590
+void __fastcall SCMD_AssignNPC(uint8_t* /*pPacketBuffer*/) {}
+
+// TODO: reconstruct - D2Client + 0x14700 (pfProcessUnit, sSCmd_UnitStateOnEx)
+void __fastcall SCMD_UnitStateOnEx(D2UnitStrc* /*pUnit*/, D2PacketBufferStrc* /*pPacketBuffer*/) {}
+
+// TODO: reconstruct - D2Client + 0x14750 (pfProcessUnit, sSCmd_UnitStateOnValEx)
+void __fastcall SCMD_UnitStateOnValEx(D2UnitStrc* /*pUnit*/, D2PacketBufferStrc* /*pPacketBuffer*/) {}
+
+// TODO: reconstruct - D2Client + 0x14900 (pfProcessUnit, sSCmd_UnitStateOffEx)
+void __fastcall SCMD_UnitStateOffEx(D2UnitStrc* /*pUnit*/, D2PacketBufferStrc* /*pPacketBuffer*/) {}
+
+// TODO: reconstruct - D2Client + 0x14950 (pfProcessUnit, sSCmd_UnitStateAllEx)
+void __fastcall SCMD_UnitStateAllEx(D2UnitStrc* /*pUnit*/, D2PacketBufferStrc* /*pPacketBuffer*/) {}
+
+// TODO: reconstruct - D2Client + 0x14B40 (pfProcessUnit, sSCmd_HealthUpdate)
+void __fastcall SCMD_HealthUpdate(D2UnitStrc* /*pUnit*/, D2PacketBufferStrc* /*pPacketBuffer*/) {}
+
+// TODO: reconstruct - D2Client + 0x14BD0 (pfProcessUnit, sSCmd_NewMonsterEx)
+void __fastcall SCMD_NewMonsterEx(D2UnitStrc* /*pUnit*/, D2PacketBufferStrc* /*pPacketBuffer*/) {}
+
+// TODO: reconstruct - D2Client + 0x15090
+void __fastcall SCMD_SetViewPos(uint8_t* /*pPacketBuffer*/) {}
+
 // D2Client.0x6FAB54C0 (RVA: 0x154C0)
 D2ClientUnitPacketListStrc* __fastcall SCMD_AllocatePacketListForUnit(D2UnitStrc* pUnit)
 {

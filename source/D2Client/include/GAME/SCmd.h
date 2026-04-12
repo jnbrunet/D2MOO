@@ -56,8 +56,74 @@ void D2Client_SetOriginalModuleBase(void* hOriginalModule);
 void D2Client_LoadOffsets();
 void D2Client_SCmd_LoadOffsets();
 
+// D2Client + 0x11CB0 -> 0x6FAB1CB0
+void __fastcall SCMD_HandleSystemPacket(uint8_t* pPacketBuffer, int nPacketSize);
+
+// D2Client + 0x12190 -> 0x6FAB2190
+void __fastcall SCMD_GameLoad(uint8_t* pPacketBuffer);
+
+// D2Client + 0x122A0 -> 0x6FAB22A0
+void __fastcall SCMD_SetClientIsInSight(uint8_t* pPacketBuffer);
+
+// D2Client + 0x12310 -> 0x6FAB2310
+void __fastcall SCMD_UnsetClientIsInSight(uint8_t* pPacketBuffer);
+
 // D2Client + 0x12970 -> D2Client.0x6FAB2970
 D2UnitStrc *__fastcall SCMD_UnitWarpXY(UnitWarpXY *arg);
+
+// D2Client + 0x12A80 -> 0x6FAB2A80 (pfProcessUnit)
+void __fastcall SCMD_ReassignUnit(D2UnitStrc* pUnit, D2PacketBufferStrc* pPacketBuffer);
+
+// D2Client + 0x12B00 -> 0x6FAB2B00
+void __fastcall SCMD_MultipleSetAttributes(uint8_t* pPacketBuffer);
+
+// D2Client + 0x12F10 -> 0x6FAB2F10
+void __fastcall SCMD_SetAttribute(uint8_t* pPacketBuffer);
+
+// D2Client + 0x13570 -> 0x6FAB3570
+void __fastcall SCMD_SKILLS_AssignSkill(uint8_t* pPacketBuffer);
+
+// D2Client + 0x13610 -> 0x6FAB3610
+void __fastcall SCMD_UpdateUnitEx(uint8_t* pPacketBuffer);
+
+// D2Client + 0x13670 -> 0x6FAB3670
+void __fastcall SCMD_SKILLS_SetQuantity(uint8_t* pPacketBuffer);
+
+// D2Client + 0x13E90 -> 0x6FAB3E90
+void __fastcall SCMD_UNITS_SetPlayerPortalFlags(uint8_t* pPacketBuffer);
+
+// D2Client + 0x13ED0 -> 0x6FAB3ED0
+void __fastcall SCMD_UNITS_SetObjectPortalFlags(uint8_t* pPacketBuffer);
+
+// D2Client + 0x143E0 -> 0x6FAB43E0
+void __fastcall SCMD_WeaponSwap(uint8_t* pPacketBuffer);
+
+// D2Client + 0x14420 -> 0x6FAB4420
+void __fastcall SCMD_UnitAction(uint8_t* pPacketBuffer);
+
+// D2Client + 0x14590 -> 0x6FAB4590
+void __fastcall SCMD_AssignNPC(uint8_t* pPacketBuffer);
+
+// D2Client + 0x14700 -> 0x6FAB4700 (pfProcessUnit, sSCmd_UnitStateOnEx)
+void __fastcall SCMD_UnitStateOnEx(D2UnitStrc* pUnit, D2PacketBufferStrc* pPacketBuffer);
+
+// D2Client + 0x14750 -> 0x6FAB4750 (pfProcessUnit, sSCmd_UnitStateOnValEx)
+void __fastcall SCMD_UnitStateOnValEx(D2UnitStrc* pUnit, D2PacketBufferStrc* pPacketBuffer);
+
+// D2Client + 0x14900 -> 0x6FAB4900 (pfProcessUnit, sSCmd_UnitStateOffEx)
+void __fastcall SCMD_UnitStateOffEx(D2UnitStrc* pUnit, D2PacketBufferStrc* pPacketBuffer);
+
+// D2Client + 0x14950 -> 0x6FAB4950 (pfProcessUnit, sSCmd_UnitStateAllEx)
+void __fastcall SCMD_UnitStateAllEx(D2UnitStrc* pUnit, D2PacketBufferStrc* pPacketBuffer);
+
+// D2Client + 0x14B40 -> 0x6FAB4B40 (pfProcessUnit, sSCmd_HealthUpdate)
+void __fastcall SCMD_HealthUpdate(D2UnitStrc* pUnit, D2PacketBufferStrc* pPacketBuffer);
+
+// D2Client + 0x14BD0 -> 0x6FAB4BD0 (pfProcessUnit, sSCmd_NewMonsterEx)
+void __fastcall SCMD_NewMonsterEx(D2UnitStrc* pUnit, D2PacketBufferStrc* pPacketBuffer);
+
+// D2Client + 0x15090 -> 0x6FAB5090
+void __fastcall SCMD_SetViewPos(uint8_t* pPacketBuffer);
 
 // D2Client + 0x150B0 -> 6FAB50B0
 void __fastcall SCMD_ParseGamePacket(uint8_t *pPacketBuffer, uint32_t nPacketSize);
