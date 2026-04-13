@@ -14,7 +14,7 @@
 //   -> select tools/idc/d2moo_types_for_ida.h
 // =============================================================
 
-static main()
+static Apply_D2Client_globals()
 {
     // Find D2Client segment base dynamically
     auto base = BADADDR;
@@ -199,3 +199,7 @@ static main()
     Message("[D2Client] Globals: %d renamed, %d typed, %d type-fail\n", renamed, typed, typeFail);
     Message("[D2Client] type-fail is normal for struct types not yet in IDA.\n");
 }
+
+#ifndef D2MOO_ALL_IDC
+static main() { Apply_D2Client_globals(); }
+#endif

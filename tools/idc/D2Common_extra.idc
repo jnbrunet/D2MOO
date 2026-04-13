@@ -10,7 +10,7 @@
 // The base is found dynamically by scanning IDA segments for "D2Common".
 // Same approach as ParseExports.idc.
 // =============================================================
-static main()
+static Apply_D2Common_extra()
 {
     // Find D2Common segment base dynamically
     auto base = BADADDR;
@@ -42,3 +42,7 @@ static main()
     addr = base + 0x093A0; set_name(addr, "DATATBLS_UnloadBeltsTxt",        0x880); renamed++;
     Message("[D2Common_extra] Done: %d non-exported functions renamed.\n", renamed);
 }
+
+#ifndef D2MOO_ALL_IDC
+static main() { Apply_D2Common_extra(); }
+#endif

@@ -76,7 +76,7 @@ function ConvertDefToIDC {
     $out.Add("// IDA 6.x: replace  set_name(a,n,0x880)  with  MakeNameEx(a,n,0x800)")
     $out.Add("// =============================================================")
     $out.Add('')
-    $out.Add('static main()')
+    $out.Add("static Apply_${DllName}()")
     $out.Add('{')
     $out.Add('    // --- Find module base via segment name ---')
     $out.Add('    auto base = BADADDR;')
@@ -127,6 +127,10 @@ function ConvertDefToIDC {
     $out.Add('')
     $out.Add("    Message(`"[$DllName] Done: %d renamed, %d skipped (rva==0)\n`", renamed, skipped);")
     $out.Add('}')
+    $out.Add('')
+    $out.Add('#ifndef D2MOO_ALL_IDC')
+    $out.Add("static main() { Apply_${DllName}(); }")
+    $out.Add('#endif')
 
     [System.IO.File]::WriteAllLines($OutPath, $out, [System.Text.ASCIIEncoding]::new())
     Write-Host "[OK] $DllName -- $($entries.Count) entries  ->  $OutPath"

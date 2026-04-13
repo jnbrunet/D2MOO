@@ -237,7 +237,7 @@ function GenerateGlobalsIDC {
     $out.Add("//   -> select tools/idc/d2moo_types_for_ida.h")
     $out.Add("// =============================================================")
     $out.Add('')
-    $out.Add('static main()')
+    $out.Add("static Apply_${DllName}_globals()")
     $out.Add('{')
     $out.Add("    // Find $DllName segment base dynamically")
     $out.Add('    auto base = BADADDR;')
@@ -277,6 +277,10 @@ function GenerateGlobalsIDC {
     $out.Add("    Message(`"[$DllName] Globals: %d renamed, %d typed, %d type-fail\n`", renamed, typed, typeFail);")
     $out.Add("    Message(`"[$DllName] type-fail is normal for struct types not yet in IDA.\n`");")
     $out.Add('}')
+    $out.Add('')
+    $out.Add('#ifndef D2MOO_ALL_IDC')
+    $out.Add("static main() { Apply_${DllName}_globals(); }")
+    $out.Add('#endif')
 
     [System.IO.File]::WriteAllLines($OutPath, $out, [System.Text.ASCIIEncoding]::new())
     Write-Host "[OK] $DllName -- $($entries.Count) globals  ->  $OutPath"

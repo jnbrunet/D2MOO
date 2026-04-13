@@ -233,7 +233,7 @@ function GenerateTypesIDC {
     $out.Add("// Without this, SetType() will fail on any function using custom structs.")
     $out.Add("// =============================================================")
     $out.Add('')
-    $out.Add('static main()')
+    $out.Add("static Apply_${DllName}_types()")
     $out.Add('{')
     $out.Add("    // Find $DllName segment base dynamically")
     $out.Add('    auto base = BADADDR;')
@@ -265,6 +265,10 @@ function GenerateTypesIDC {
     $out.Add("    Message(`"[$DllName] If fail > 0, run: File > Load file > Parse C header file\n`");")
     $out.Add("    Message(`"[$DllName]   -> select tools/idc/d2moo_types_for_ida.h\n`");")
     $out.Add('}')
+    $out.Add('')
+    $out.Add('#ifndef D2MOO_ALL_IDC')
+    $out.Add("static main() { Apply_${DllName}_types(); }")
+    $out.Add('#endif')
 
     [System.IO.File]::WriteAllLines($OutPath, $out, [System.Text.ASCIIEncoding]::new())
     Write-Host "[OK] $DllName -- $($entries.Count) signatures  ->  $OutPath"
@@ -366,7 +370,7 @@ function GenerateRenameIDC {
     $out.Add("// IDA 6.x: replace  set_name(a,n,0x880)  with  MakeNameEx(a,n,0x800)")
     $out.Add("// =============================================================")
     $out.Add('')
-    $out.Add('static main()')
+    $out.Add("static Apply_${DllName}()")
     $out.Add('{')
     $out.Add("    // --- Find module base via segment name ---")
     $out.Add('    auto base = BADADDR;')
@@ -395,6 +399,10 @@ function GenerateRenameIDC {
     $out.Add('')
     $out.Add("    Message(`"[$DllName] Renamed: %d ok, %d skipped/failed\n`", renamed, skipped);")
     $out.Add('}')
+    $out.Add('')
+    $out.Add('#ifndef D2MOO_ALL_IDC')
+    $out.Add("static main() { Apply_${DllName}(); }")
+    $out.Add('#endif')
 
     [System.IO.File]::WriteAllLines($OutPath, $out, [System.Text.ASCIIEncoding]::new())
     Write-Host "[OK] $DllName rename -- $($entries.Count) names  ->  $OutPath"

@@ -11,7 +11,7 @@
 // Without this, SetType() will fail on any function using custom structs.
 // =============================================================
 
-static main()
+static Apply_D2Common_types()
 {
     // Find D2Common segment base dynamically
     auto base = BADADDR;
@@ -1822,3 +1822,7 @@ static main()
     Message("[D2Common] If fail > 0, run: File > Load file > Parse C header file\n");
     Message("[D2Common]   -> select tools/idc/d2moo_types_for_ida.h\n");
 }
+
+#ifndef D2MOO_ALL_IDC
+static main() { Apply_D2Common_types(); }
+#endif

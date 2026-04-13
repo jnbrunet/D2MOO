@@ -12,7 +12,7 @@
 // IDA 6.x: replace  set_name(a,n,0x880)  with  MakeNameEx(a,n,0x800)
 // =============================================================
 
-static main()
+static Apply_D2Client()
 {
     // --- Find module base via segment name ---
     auto base = BADADDR;
@@ -89,3 +89,7 @@ static main()
 
     Message("[D2Client] Renamed: %d ok, %d skipped/failed\n", renamed, skipped);
 }
+
+#ifndef D2MOO_ALL_IDC
+static main() { Apply_D2Client(); }
+#endif

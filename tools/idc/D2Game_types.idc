@@ -11,7 +11,7 @@
 // Without this, SetType() will fail on any function using custom structs.
 // =============================================================
 
-static main()
+static Apply_D2Game_types()
 {
     // Find D2Game segment base dynamically
     auto base = BADADDR;
@@ -3220,3 +3220,7 @@ static main()
     Message("[D2Game] If fail > 0, run: File > Load file > Parse C header file\n");
     Message("[D2Game]   -> select tools/idc/d2moo_types_for_ida.h\n");
 }
+
+#ifndef D2MOO_ALL_IDC
+static main() { Apply_D2Game_types(); }
+#endif

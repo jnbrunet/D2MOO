@@ -15,7 +15,7 @@
 // IDA 6.x: replace  set_name(a,n,0x880)  with  MakeNameEx(a,n,0x800)
 // =============================================================
 
-static main()
+static Apply_Fog()
 {
     // --- Find module base via segment name ---
     auto base = BADADDR;
@@ -199,3 +199,7 @@ static main()
 
     Message("[Fog] Done: %d renamed, %d skipped (rva==0)\n", renamed, skipped);
 }
+
+#ifndef D2MOO_ALL_IDC
+static main() { Apply_Fog(); }
+#endif
