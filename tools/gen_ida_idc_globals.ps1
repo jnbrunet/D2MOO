@@ -42,22 +42,22 @@ $DllConfig = @{
         ImageBase  = 0x6FAA0000L
         SegPattern = "D2Client"
         HeaderDir  = "D2Client\include"
-        # // D2Client + 0xOFFSET -> ... (offset IS the RVA)
-        CommentRx  = '^// D2Client \+ 0x([0-9A-Fa-f]+)\s*->'
+        # Canonical format: // D2Client.dll + 0xRVA (0xVA)
+        CommentRx  = '^// D2Client\.dll \+ 0x([0-9A-Fa-f]+) \('
     }
     "D2Common" = @{
         ImageBase  = 0x6FD40000L
         SegPattern = "D2Common"
         HeaderDir  = "D2Common\include"
         # //D2Common.0xVA (absolute VA -> subtract ImageBase)
-        CommentRx  = '^//D2Common\.0x([0-9A-Fa-f]{8})'
+        CommentRx  = '^// ?D2Common\.0x([0-9A-Fa-f]{8})'
         CommentIsAbsoluteVA = $true
     }
     "D2Game" = @{
         ImageBase  = 0x6FC30000L
         SegPattern = "D2Game"
         HeaderDir  = "D2Game\include"
-        CommentRx  = '^//D2Game\.0x([0-9A-Fa-f]{8})'
+        CommentRx  = '^// ?D2Game\.0x([0-9A-Fa-f]{8})'
         CommentIsAbsoluteVA = $true
     }
 }

@@ -11,21 +11,38 @@ Instead, each IDC parses the PE export table directly from the dump memory:
     set_name(addr, "FunctionName", 0x880)
 No per-function addresses are hardcoded.  Only the DLL base per script.
 ## Available scripts
-| File                  | DLL          | Entries | Base (1.10f)  |
-|-----------------------|--------------|---------|---------------|
-| D2Common.idc          | D2Common.dll | 1171    | 0x6FD40000    |
-| D2Common_extra.idc    | D2Common.dll | 10      | 0x6FD40000    |
-| D2Game.idc            | D2Game.dll   | 59      | 0x6FC30000    |
-| Fog.idc               | Fog.dll      | 138     | 0x6FF50000    |
-| D2Win.idc             | D2Win.dll    | 208     | 0x6F8A0000    |
-| D2Gfx.idc             | D2Gfx.dll    | 82      | 0x6FA70000    |
-| D2Lang.idc            | D2Lang.dll   | 42      | 0x6FC10000    |
-| D2Net.idc             | D2Net.dll    | 40      | 0x6FC00000    |
-| D2Sound.idc           | D2Sound.dll  | 10      | 0x6F980000    |
-| Storm.idc             | Storm.dll    | 361     | 0x15000000 *  |
-| D2CMP.idc             | D2CMP.dll    | 24      | 0x6FDF0000    |
+| File                       | DLL          | Entries | Base (1.10f)  |
+|----------------------------|--------------|---------|---------------|
+| D2Common.idc               | D2Common.dll | 1171    | 0x6FD40000    |
+| D2Common_extra.idc         | D2Common.dll | 10      | 0x6FD40000    |
+| D2Game.idc                 | D2Game.dll   | 59      | 0x6FC30000    |
+| Fog.idc                    | Fog.dll      | 138     | 0x6FF50000    |
+| D2Win.idc                  | D2Win.dll    | 208     | 0x6F8A0000    |
+| D2Gfx.idc                  | D2Gfx.dll    | 82      | 0x6FA70000    |
+| D2Lang.idc                 | D2Lang.dll   | 42      | 0x6FC10000    |
+| D2Net.idc                  | D2Net.dll    | 40      | 0x6FC00000    |
+| D2Sound.idc                | D2Sound.dll  | 10      | 0x6F980000    |
+| Storm.idc                  | Storm.dll    | 361     | 0x15000000 *  |
+| D2CMP.idc                  | D2CMP.dll    | 24      | 0x6FDF0000    |
+| rename_jump_thunks.idc     | (all DLLs)   | —       | —             |
 (*) Storm base is not defined in D2MOO source -- verify in your dump.
     Inferred bases (D2Win/D2Gfx/D2Lang) may also need verification.
+
+## rename_jump_thunks.idc
+Scans **all** functions in the database (across every loaded DLL) and
+renames "jump thunk" functions to `j_<target> / j_<target>_0 / …`.
+
+A jump thunk is a function whose body is a single `jmp` instruction
+(optionally followed by NOP alignment bytes).
+
+Example:
+```
+j_d2common_10369    (in D2Client.dll)  ->  j_UNITS_GetAnimOrSeqMode
+j_d2common_10369_0  (in D2Game.dll)   ->  j_UNITS_GetAnimOrSeqMode_0
+```
+
+**Run order:** apply all DLL renaming scripts first so that target
+function names are already resolved, then run this script last.
 ## How to apply in IDA (process dump)
 1. Open the process dump in IDA (File > Open as .dmp or raw binary)
 2. File > Script file...  (Alt+F7)

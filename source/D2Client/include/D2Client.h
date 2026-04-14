@@ -42,93 +42,93 @@ struct D2MenuInfoStrc
 };
 
 
-// D2Client + 0xD40EC -> 6FB740EC
+// D2Client.dll + 0xD40EC (0x6FB740EC)
 extern int g_nScreenWidth;
 
-// D2Client + 0xD40F0 -> 6FB740F0
+// D2Client.dll + 0xD40F0 (0x6FB740F0)
 extern int g_nScreenHeight;
 
-// D2Client + 0xFA980 -> 6FB9A980
+// D2Client.dll + 0xFA980 (0x6FB9A980)
 extern BOOL g_DisplayPerformanceStats;
 
-// D2Client + 0x1077D4 -> 6FBA77D4
+// D2Client.dll + 0x1077D4 (0x6FBA77D4)
 extern _RTL_CRITICAL_SECTION D2Client_CriticalSection_A;
 
-// D2Client + 0x107810 -> 0x6FBA7810
+// D2Client.dll + 0x107810 (0x6FBA7810)
 extern char * g_pCurrentCharacterName;
 
-// D2Client + 0x10B9C4 -> 6FBAB9C4
+// D2Client.dll + 0x10B9C4 (0x6FBAB9C4)
 extern D2C_PanelConfig g_nOpenPanels;
 
-// D2Client + 0x10B9C0 -> 6FBAB9C0
+// D2Client.dll + 0x10B9C0 (0x6FBAB9C0)
 extern int16_t g_nPanelCameraOffsetX;
 
-// D2Client + 0x117028 -> 6FBB7028
+// D2Client.dll + 0x117028 (0x6FBB7028)
 extern ItemLabel g_ItemLabels[32];
 
-// D2Client + 0x10B9BC -> 6FBAB9BC
+// D2Client.dll + 0x10B9BC (0x6FBAB9BC)
 extern int g_nCameraOriginX;
 
-// D2Client + 0x10B9B8 -> 6FBAB9B8
+// D2Client.dll + 0x10B9B8 (0x6FBAB9B8)
 extern int g_nCameraOriginY;
 
-// D2Client + 0x11C200 -> D2Client.0x6FBBC200
+// D2Client.dll + 0x11C200 (0x6FBBC200)
 extern D2UnitStrc * g_pCurrentUnit;
 
-// D2Client + 0x111A3C -> 6FBB1A3C
+// D2Client.dll + 0x111A3C (0x6FBB1A3C)
 extern int g_CurrentUnitClientCoordX;
 
-// D2Client + 0x111A40 -> 6FBB1A40
+// D2Client.dll + 0x111A40 (0x6FBB1A40)
 extern int g_CurrentUnitClientCoordY;
 
-// D2Client + 0x111A34 -> 6FBB1A34
+// D2Client.dll + 0x111A34 (0x6FBB1A34)
 extern int g_PreviousUnitClientCoordX;
 
-// D2Client + 0x111A38 -> 6FBB1A38
+// D2Client.dll + 0x111A38 (0x6FBB1A38)
 extern int g_PreviousUnitClientCoordY;
 
-// D2Client + 0x11AA00 -> 6FBBAA00
+// D2Client.dll + 0x11AA00 (0x6FBBAA00)
 extern D2UnitStrc *g_D2Client_GlobalUnitTables[128];
 
-// D2Client + 0x10B9E8 -> 6FBAB9E8
+// D2Client.dll + 0x10B9E8 (0x6FBAB9E8)
 extern BOOL g_bHasSelectedUnit;
 
-// D2Client + 0x119428 -> 6FBB9428
+// D2Client.dll + 0x119428 (0x6FBB9428)
 extern int sgnNumShowItems;
 
-// D2Client + 0x116FDC -> 6FBB6FDC
+// D2Client.dll + 0x116FDC (0x6FBB6FDC)
 extern D2MenuInfoStrc g_D2Client_MenuInfo;
 
-// D2Client + 0xD7BC0 -> 6FB77BC0
+// D2Client.dll + 0xD7BC0 (0x6FB77BC0)
 extern int g_D2Client_divisor;
 
-// D2Client + 0x1119D8 -> 6FBB19D8
+// D2Client.dll + 0x1119D8 (0x6FBB19D8)
 extern POINT g_D2CLIENT_offset;
 
-// D2Client + 0x111990 -> 6FBB1990
+// D2Client.dll + 0x111990 (0x6FBB1990)
 extern BOOL p_D2Client_Automap_Is_Mini;
 
-// D2Client + 0xBF80 -> 6FAABF80
+// D2Client.dll + 0xBF80 (0x6FAABF80)
 int GAME_GetFrame();
 
-// D2Client + 0xC0805 -> 0x6FB60805
+// D2Client.dll + 0xC0805 (0x6FB60805)
 int D2CLIENT_sprintf(_BYTE *buffer, const char *format, ...);
 
-// D2Client + 0xC2EBE -> 0x6FB62EBE
+// D2Client.dll + 0xC2EBE (0x6FB62EBE)
 int __cdecl D2CLIENT_buf_overflow(unsigned __int8 c, _DWORD *stream_ctx);
 
-// D2Client + 0xC2FD6 -> 0x6FB62FD6
+// D2Client.dll + 0xC2FD6 (0x6FB62FD6)
 int __cdecl D2CLIENT_vsnprintf(int *stream_ctx, const char *format, va_list args);
 
-// D2Client + 0xC3717 -> 0x6FB63717
+// D2Client.dll + 0xC3717 (0x6FB63717)
 _DWORD *__cdecl D2CLIENT_putchar_buf(unsigned __int8 c, _DWORD *stream_ctx, _DWORD *pCount);
 
-// D2Client + 0xC37B5 -> 0x6FB637B5
+// D2Client.dll + 0xC37B5 (0x6FB637B5)
 int __cdecl D2CLIENT_va_arg_int(va_list *ap);
 
-// D2Client + 0xC42A0 -> 0x6FB642A0
+// D2Client.dll + 0xC42A0 (0x6FB642A0)
 char *__cdecl D2CLIENT_strlen(_DWORD *str);
 
-// D2Client + 0xC2E48 -> 0x6FB62E48
+// D2Client.dll + 0xC2E48 (0x6FB62E48)
 int __cdecl D2CLIENT_format_float(int value, int buffer, int fmt_char, int precision, int flags);
 

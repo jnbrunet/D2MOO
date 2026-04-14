@@ -22,7 +22,7 @@
 param(
     [string]   $SourceDir = "$PSScriptRoot\..\source",
     [string]   $OutputDir = "$PSScriptRoot\idc",
-    [string[]] $Dlls      = @("D2Common", "D2Game", "D2Client")
+    [string[]] $Dlls      = @("D2Common", "D2Game", "D2Client", "D2CMP", "D2Gfx", "D2Lang", "D2Net", "D2Win", "D2Sound", "Fog", "Storm")
 )
 
 Set-StrictMode -Version Latest
@@ -45,8 +45,8 @@ $DllConfig = @{
         HeaderDir         = "D2Common\include"
         StripRx           = 'D2COMMON_DLL_DECL\s+'
         GenerateRenameIDC = $false   # covered by gen_ida_idc.ps1 via .def file
-        CommentPatterns   = @(
-            @{ Rx = '^//D2Common\.0x([0-9A-Fa-f]{8})'; IsOffset = $false }
+        CommentPatterns = @(
+            @{ Rx = '^// ?D2Common\.0x([0-9A-Fa-f]{8})'; IsOffset = $false }
         )
     }
     "D2Game" = @{
@@ -55,8 +55,8 @@ $DllConfig = @{
         HeaderDir         = "D2Game\include"
         StripRx           = 'D2GAME_DLL_DECL\s+'
         GenerateRenameIDC = $false   # covered by gen_ida_idc.ps1 via .def file
-        CommentPatterns   = @(
-            @{ Rx = '^//D2Game\.0x([0-9A-Fa-f]{8})'; IsOffset = $false }
+        CommentPatterns = @(
+            @{ Rx = '^// ?D2Game\.0x([0-9A-Fa-f]{8})'; IsOffset = $false }
         )
     }
     "D2Client" = @{
@@ -66,11 +66,83 @@ $DllConfig = @{
         StripRx           = ''
         GenerateRenameIDC = $true    # no .def exports -- generate set_name IDC from headers
         CommentPatterns   = @(
-            # Old style: // D2Client + 0xOFFSET -> ...  (OFFSET is already the RVA)
-            @{ Rx = '^// D2Client \+ 0x([0-9A-Fa-f]+)\s*->'; IsOffset = $true }
-            # New style: // D2Client.0xVA  (absolute VA)
-            @{ Rx = '^//D2Client\.0x([0-9A-Fa-f]{8})'; IsOffset = $false }
+            # Canonical format: // D2Client.dll + 0xRVA (0xVA)
+            @{ Rx = '^// D2Client\.dll \+ 0x([0-9A-Fa-f]+) \('; IsOffset = $true }
         )
+    }
+    "D2CMP" = @{
+        ImageBase         = 0x6FDF0000L
+        SegPattern        = "D2CMP"
+        HeaderDir         = "D2CMP\include"
+        StripRx           = ''
+        GenerateRenameIDC = $false   # covered by gen_ida_idc.ps1 via .def file
+        CommentPatterns   = @()      # no //DllName.0xVA comments; uses D2FUNC_DLL macros
+    }
+    "D2Gfx" = @{
+        ImageBase         = 0x6FA70000L
+        SegPattern        = "D2Gfx"
+        HeaderDir         = "D2Gfx\include"
+        StripRx           = 'D2GFX_DLL_DECL\s+'
+        GenerateRenameIDC = $false
+        CommentPatterns   = @(
+            @{ Rx = '^// ?D2Gfx\.0x([0-9A-Fa-f]{8})'; IsOffset = $false }
+        )
+    }
+    "D2Lang" = @{
+        ImageBase         = 0x6FC10000L
+        SegPattern        = "D2Lang"
+        HeaderDir         = "D2Lang\include"
+        StripRx           = 'D2LANG_DLL_DECL\s+'
+        GenerateRenameIDC = $false
+        CommentPatterns   = @(
+            @{ Rx = '^// ?D2Lang\.0x([0-9A-Fa-f]{8})'; IsOffset = $false }
+        )
+    }
+    "D2Net" = @{
+        ImageBase         = 0x6FC00000L
+        SegPattern        = "D2Net"
+        HeaderDir         = "D2Net\include"
+        StripRx           = 'D2NET_DLL_DECL\s+'
+        GenerateRenameIDC = $false
+        CommentPatterns   = @(
+            @{ Rx = '^// ?D2Net\.0x([0-9A-Fa-f]{8})'; IsOffset = $false }
+        )
+    }
+    "D2Win" = @{
+        ImageBase         = 0x6F8A0000L
+        SegPattern        = "D2Win"
+        HeaderDir         = "D2Win\include"
+        StripRx           = 'D2WIN_DLL_DECL\s+'
+        GenerateRenameIDC = $false
+        CommentPatterns   = @(
+            @{ Rx = '^// ?D2Win\.0x([0-9A-Fa-f]{8})'; IsOffset = $false }
+        )
+    }
+    "D2Sound" = @{
+        ImageBase         = 0x6F980000L
+        SegPattern        = "D2Sound"
+        HeaderDir         = "D2Sound\include"
+        StripRx           = ''
+        GenerateRenameIDC = $false
+        CommentPatterns   = @()      # uses D2FUNC_DLL macros (D2SOUND prefix)
+    }
+    "Fog" = @{
+        ImageBase         = 0x6FF50000L
+        SegPattern        = "Fog"
+        HeaderDir         = "Fog\include"
+        StripRx           = 'FOG_DLL_DECL\s+'
+        GenerateRenameIDC = $false
+        CommentPatterns   = @(
+            @{ Rx = '^// 1\.10f: 0x([0-9A-Fa-f]{8})'; IsOffset = $false }
+        )
+    }
+    "Storm" = @{
+        ImageBase         = 0x15000000L  # unverified -- verify in your dump (see README)
+        SegPattern        = "Storm"
+        HeaderDir         = "Storm\include"
+        StripRx           = ''
+        GenerateRenameIDC = $false
+        CommentPatterns   = @()      # uses D2FUNC_DLL_NP macros (no DLL name prefix)
     }
 }
 
@@ -151,7 +223,7 @@ function GenerateTypesIDC {
     $stripRx   = $Config.StripRx
     $patterns  = $Config.CommentPatterns
 
-    $headers = Get-ChildItem $HeaderRootDir -Recurse -Filter "*.h" -ErrorAction SilentlyContinue
+    $headers = @(Get-ChildItem $HeaderRootDir -Recurse -Filter "*.h" -ErrorAction SilentlyContinue)
     if ($headers.Count -eq 0) {
         Write-Warning "$DllName : no headers found in $HeaderRootDir"
         return
@@ -160,7 +232,7 @@ function GenerateTypesIDC {
     $entries = [System.Collections.Generic.List[PSCustomObject]]::new()
 
     foreach ($hdr in $headers) {
-        $lines = Get-Content $hdr.FullName -Encoding UTF8
+        $lines = @(Get-Content $hdr.FullName -Encoding UTF8)
         for ($i = 0; $i -lt $lines.Count; $i++) {
             $commentLine = $lines[$i].Trim()
 
@@ -184,16 +256,32 @@ function GenerateTypesIDC {
                 }
             }
 
-            # --- Pattern B: D2FUNC(DllName, NAME, RET, CONV, (ARGS), OFFSET) ---
-            # Handles dynamic-load function pointers declared via macro (no preceding comment).
-            if ($commentLine -match ('^D2FUNC\(\s*' + [regex]::Escape($DllName) +
+            # --- Pattern B: D2FUNC / D2FUNC_DLL (DllName, NAME, RET, CONV, (ARGS), OFFSET) ---
+            # Handles both dynamic-load pointers (D2FUNC) and import-library exports (D2FUNC_DLL).
+            # Note: PowerShell -match is case-insensitive, so "D2Lang" matches "D2LANG" etc.
+            if ($commentLine -match ('^D2FUNC(?:_DLL)?\(\s*' + [regex]::Escape($DllName) +
                 '\s*,\s*(\w+)\s*,\s*(.+?)\s*,\s*(__\w+)\s*,\s*(\([^)]*\))\s*,\s*0x([0-9A-Fa-f]+)\s*\)')) {
                 $fnName  = $DllName + "_" + $Matches[1]
                 $retType = $Matches[2].Trim()
                 $conv    = $Matches[3].Trim()
                 $args    = $Matches[4].Trim()
                 $rvaFn   = [Convert]::ToInt64($Matches[5], 16)
-                if ($rvaFn -lt 0x10000000) {
+                if ($rvaFn -gt 0 -and $rvaFn -lt 0x10000000) {
+                    $sig = FixSignatureForIDA "$retType $conv $fnName$args"
+                    $entries.Add([PSCustomObject]@{ RVA = $rvaFn; Sig = ($sig -replace '"', '\"') })
+                }
+            }
+
+            # --- Pattern C: D2FUNC_DLL_NP (DllName, NAME, RET, CONV, (ARGS), OFFSET) ---
+            # NP = No Prefix: function name is NAME without the DllName_ prefix (e.g. Storm).
+            if ($commentLine -match ('^D2FUNC_DLL_NP\(\s*' + [regex]::Escape($DllName) +
+                '\s*,\s*(\w+)\s*,\s*(.+?)\s*,\s*(__\w+)\s*,\s*(\([^)]*\))\s*,\s*0x([0-9A-Fa-f]+)\s*\)')) {
+                $fnName  = $Matches[1]   # No DLL prefix for NP variant
+                $retType = $Matches[2].Trim()
+                $conv    = $Matches[3].Trim()
+                $args    = $Matches[4].Trim()
+                $rvaFn   = [Convert]::ToInt64($Matches[5], 16)
+                if ($rvaFn -gt 0 -and $rvaFn -lt 0x10000000) {
                     $sig = FixSignatureForIDA "$retType $conv $fnName$args"
                     $entries.Add([PSCustomObject]@{ RVA = $rvaFn; Sig = ($sig -replace '"', '\"') })
                 }
@@ -292,7 +380,7 @@ function GenerateRenameIDC {
     $stripRx   = $Config.StripRx
     $patterns  = $Config.CommentPatterns
 
-    $headers = Get-ChildItem $HeaderRootDir -Recurse -Filter "*.h" -ErrorAction SilentlyContinue
+    $headers = @(Get-ChildItem $HeaderRootDir -Recurse -Filter "*.h" -ErrorAction SilentlyContinue)
     if ($headers.Count -eq 0) {
         Write-Warning "$DllName : no headers found in $HeaderRootDir"
         return
@@ -301,7 +389,7 @@ function GenerateRenameIDC {
     $entries = [System.Collections.Generic.List[PSCustomObject]]::new()
 
     foreach ($hdr in $headers) {
-        $lines = Get-Content $hdr.FullName -Encoding UTF8
+        $lines = @(Get-Content $hdr.FullName -Encoding UTF8)
         for ($i = 0; $i -lt $lines.Count; $i++) {
             $commentLine = $lines[$i].Trim()
 
@@ -325,12 +413,22 @@ function GenerateRenameIDC {
                 }
             }
 
-            # --- Pattern B: D2FUNC macro ---
-            if ($commentLine -match ('^D2FUNC\(\s*' + [regex]::Escape($DllName) +
+            # --- Pattern B: D2FUNC / D2FUNC_DLL macro ---
+            if ($commentLine -match ('^D2FUNC(?:_DLL)?\(\s*' + [regex]::Escape($DllName) +
                 '\s*,\s*(\w+)\s*,\s*(.+?)\s*,\s*(__\w+)\s*,\s*(\([^)]*\))\s*,\s*0x([0-9A-Fa-f]+)\s*\)')) {
                 $fnName = $DllName + "_" + $Matches[1]
                 $rvaFn  = [Convert]::ToInt64($Matches[5], 16)
-                if ($rvaFn -lt 0x10000000) {
+                if ($rvaFn -gt 0 -and $rvaFn -lt 0x10000000) {
+                    $entries.Add([PSCustomObject]@{ RVA = $rvaFn; Name = $fnName })
+                }
+            }
+
+            # --- Pattern C: D2FUNC_DLL_NP macro (No Prefix) ---
+            if ($commentLine -match ('^D2FUNC_DLL_NP\(\s*' + [regex]::Escape($DllName) +
+                '\s*,\s*(\w+)\s*,\s*(.+?)\s*,\s*(__\w+)\s*,\s*(\([^)]*\))\s*,\s*0x([0-9A-Fa-f]+)\s*\)')) {
+                $fnName = $Matches[1]   # No DLL prefix for NP variant
+                $rvaFn  = [Convert]::ToInt64($Matches[5], 16)
+                if ($rvaFn -gt 0 -and $rvaFn -lt 0x10000000) {
                     $entries.Add([PSCustomObject]@{ RVA = $rvaFn; Name = $fnName })
                 }
             }
